@@ -41,6 +41,7 @@ requirements:
     - scipy
     - pycrsx
     - hydrolm
+    - xarray
 
 test:
   imports:
