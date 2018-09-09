@@ -9,7 +9,7 @@ The hydrointerp package includes several interpolation functions specifically de
 
 Installation
 ------------
-ETo can be installed via pip or conda::
+hydrointerp can be installed via pip or conda::
 
   pip install hydrointerp
 
