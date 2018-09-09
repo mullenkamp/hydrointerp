@@ -18,3 +18,10 @@ or::
   conda install -c mullenkamp hydrointerp
 
 The core dependency is `Pandas <http://pandas.pydata.org/pandas-docs/stable/>`_ and `Scipy <https://docs.scipy.org/doc/scipy/reference/index.html>`_.
+
+Project Plan
+------------
+- Core functions for 1, 2, and possibly 3D interpolation methods particularly geared towards hyrologic data (e.g. precipitation, flow, groundwater levels, etc).
+- Specific functions built upon the core interpolations functions for those hydrologic features mentioned above.
+- Functions/classes for importing scientific data from external sources that could be used as part of the interpolations (e.g. NIWA, MetService, NASA).
+- Associated utility functions
