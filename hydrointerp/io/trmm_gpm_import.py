@@ -114,6 +114,7 @@ class Gesdisc(object):
 
         ds_list = []
         for u in urls2:
+            print(u)
             store = xr.backends.PydapDataStore.open(u, session=self.session)
             ds = xr.open_dataset(store)
             ds2 = ds[[dataset_type]].sel(lat=slice(min_lat, max_lat), lon=slice(min_lon, max_lon))

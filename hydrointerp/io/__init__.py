@@ -1,2 +1,2 @@
-from trmm_gpm_import import Gesdisc
-from raster import save_geotiff
+from hydrointerp.io.trmm_gpm_import import Gesdisc
+from hydrointerp.io.raster import save_geotiff

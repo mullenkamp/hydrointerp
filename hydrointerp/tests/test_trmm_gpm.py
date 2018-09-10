@@ -5,7 +5,7 @@ Created on Wed May  9 15:12:14 2018
 @author: MichaelEK
 """
 import pytest
-from hydrointerp import Gesdisc
+from hydrointerp.io import Gesdisc
 
 ###############################
 ### Parameters

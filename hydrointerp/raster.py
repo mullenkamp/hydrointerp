@@ -13,7 +13,7 @@ from scipy.interpolate import griddata, Rbf
 from pycrsx.utils import convert_crs
 
 
-def grid_interp_ts(df, time_col, x_col, y_col, data_col, grid_res, from_crs=None, to_crs=None, interp_fun='cubic', agg_ts_fun=None, period=None, digits=2):
+def interp_to_grid(df, time_col, x_col, y_col, data_col, grid_res, from_crs=None, to_crs=None, interp_fun='cubic', agg_ts_fun=None, period=None, digits=2):
     """
     Function to take a dataframe of z values and interate through and resample both in time and space. Returns a DataFrame of gridded interpolated results.
 
@@ -53,7 +53,7 @@ def grid_interp_ts(df, time_col, x_col, y_col, data_col, grid_res, from_crs=None
     df1 = df.copy()
 
     #### Resample the time series data
-    if agg_ts_fun is not None:
+    if isinstance(agg_ts_fun, str):
         df1a = df1.set_index(time_col)
         if agg_ts_fun == 'sum':
             df2 = df1a.groupby([pd.TimeGrouper(period), pd.Grouper(y_col), pd.Grouper(x_col)])[data_col].sum().reset_index()
@@ -115,7 +115,7 @@ def grid_interp_ts(df, time_col, x_col, y_col, data_col, grid_res, from_crs=None
     return new_df[new_df[data_col].notnull()]
 
 
-def point_interp_ts(df, time_col, x_col, y_col, data_col, point_shp, point_site_col, from_crs, to_crs=None, interp_fun='cubic', agg_ts_fun=None, period=None, digits=2):
+def interp_to_points(df, time_col, x_col, y_col, data_col, point_shp, point_site_col, from_crs, to_crs=None, interp_fun='cubic', agg_ts_fun=None, period=None, digits=2):
     """
     Function to take a dataframe of z values and interate through and resample both in time and space. Returns a DataFrame in the shape of the points from the point_shp.
 
@@ -169,7 +169,7 @@ def point_interp_ts(df, time_col, x_col, y_col, data_col, point_shp, point_site_
     df1 = df.copy()
 
     #### Resample the time series data
-    if agg_ts_fun is not None:
+    if isinstance(agg_ts_fun, str):
         df1a = df1.set_index(time_col)
         if agg_ts_fun == 'sum':
             df2 = df1a.groupby([pd.TimeGrouper(period), pd.Grouper(y_col), pd.Grouper(x_col)])[data_col].sum().reset_index()
