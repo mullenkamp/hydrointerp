@@ -23,3 +23,6 @@ def tsreg(ts, freq=None, interp=False, maxgap=None):
         ts1 = ts1.interpolate(interp, limit=maxgap)
 
     return ts1
+
+
+def dap_to_xarray(

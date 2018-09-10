@@ -238,7 +238,7 @@ def grid_resample(x, y, z, x_int, y_int, digits=3, method='multiquadric'):
     return z_int2
 
 
-def save_geotiff(df, data_col, crs, x_col='x', y_col='y', time_col=None, nfiles='many', grid_res=None, export_path='geotiff.tif', ):
+def save_geotiff(df, data_col, crs, x_col='x', y_col='y', time_col=None, nfiles='many', grid_res=None, export_path='geotiff.tif'):
     """
     Function to convert a dataframe of x, y, and data to a GeoTiff. If the DataFrame has a time_col, then these instances can be saved as multiple bands in the GeoTiff or as multiple GeoTiffs.
 
@@ -292,12 +292,12 @@ def save_geotiff(df, data_col, crs, x_col='x', y_col='y', time_col=None, nfiles=
     ### Make the rasters
     if time_col is None:
         z = df.set_index([y_col, x_col])[data_col].unstack().values[::-1]
-        new_dataset = ras_open(export_path, 'w', driver='GTiff', height=len(xy1[y_col].unique()), width=len(xy1[x_col].unique()), count=1, dtype=df[data_col].dtype, crs=convert_crs(crs, pass_str=True), transform=trans2)
+        new_dataset = ras_open(export_path, 'w', driver='GTiff', height=len(xy1[y_col].unique()), width=len(xy1[x_col].unique()), count=1, dtype=df[data_col].dtype.name, crs=convert_crs(crs, pass_str=True), transform=trans2)
         new_dataset.write(z, 1)
         new_dataset.close()
     else:
         if nfiles == 'one':
-            new_dataset = ras_open(export_path, 'w', driver='GTiff', height=len(xy1[y_col].unique()), width=len(xy1[x_col].unique()), count=len(time), dtype=df[data_col].dtype, crs=convert_crs(crs), transform=trans2)
+            new_dataset = ras_open(export_path, 'w', driver='GTiff', height=len(xy1[y_col].unique()), width=len(xy1[x_col].unique()), count=len(time), dtype=df[data_col].dtype.name, crs=convert_crs(crs), transform=trans2)
             for i in range(1, len(time)+1):
                 z = df.loc[df[time_col] == time[i - 1]].set_index([y_col, x_col])[data_col].unstack().values[::-1]
                 new_dataset.write(z, i)
@@ -308,7 +308,7 @@ def save_geotiff(df, data_col, crs, x_col='x', y_col='y', time_col=None, nfiles=
                 str_date = pd.to_datetime(i).strftime('%Y-%m-%d_%H')
                 file2 = file1 + '_' + str_date + '.tif'
                 z = df.loc[df[time_col] == i].set_index([y_col, x_col])[data_col].unstack().values[::-1]
-                new_dataset = ras_open(file2, 'w', driver='GTiff', height=len(xy1[y_col].unique()), width=len(xy1[x_col].unique()), count=1, dtype=df[data_col].dtype, crs=convert_crs(crs), transform=trans2)
+                new_dataset = ras_open(file2, 'w', driver='GTiff', height=len(xy1[y_col].unique()), width=len(xy1[x_col].unique()), count=1, dtype=df[data_col].dtype.name, crs=convert_crs(crs), transform=trans2)
                 new_dataset.write(z, 1)
                 new_dataset.close()
 
