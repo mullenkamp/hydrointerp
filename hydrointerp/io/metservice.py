@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#- -*- coding: utf-8 -*-
 """
 Created on Thu Jun 29 11:17:26 2017
 
@@ -11,9 +11,58 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import geopandas as gpd
+from gistools import vector
 from shapely.geometry import Point
-from hydropandas.io.tools.mssql import rd_sql
-from hydropandas.tools.general.spatial.vector import xy_to_gpd
+
+base_dir = r'E:\ecan\shared\base_data\metservice\2018-09-11'
+
+nc1 = 'wrf_hourly_precip_nz4kmN-NCEP_2018090918.nc'
+nc1 = 'wrf_hourly_precip_nz8kmN-NCEP_2018090918.nc'
+
+ms_nc = os.path.join(base_dir, nc1)
+
+ms1 = xr.open_dataset(os.path.join(base_dir, nc1))
+ms2 = ms1.sel(time='2018-09-12 6:00:00').drop('time').precipitation_amount
+df1 = ms2.to_dataframe().reset_index(drop=True)
+#ms_proj = to_proj4(nc)
+df2 = df1[df1.longitude > 0]
+
+#gdf1 = vector.xy_to_gpd(df2.precipitation_amount, 'longitude', 'latitude', df2, ms_proj)
+gdf1 = vector.xy_to_gpd(df2.precipitation_amount, 'longitude', 'latitude', df2, 4326)
+
+gdf1.columns = ['precip', 'geometry']
+#gdf2 = gdf1.to_crs(epsg=2193)
+
+gdf1.to_file(os.path.join(base_dir, 'test_ms_df.shp'))
+
+
+def to_proj4(nc):
+    """
+    Function to create a proj4 formated string from a MetService netcdf.
+
+    Parameters
+    ----------
+    nc : str
+        str path to the MetService netcdf.
+
+    Returns
+    -------
+    str
+        Proj4 formatted
+    """
+    ### Open the nc file
+    ms1 = xr.open_dataset(nc)
+    attrs1 = ms1.attrs
+    ms1.close()
+
+    if attrs1['projection_name'] == 'Lambert Conformal':
+        proj_base = '+proj=lcc +lat_1={lat1} +lat_2={lat2} +lat_0={lat0} +lon_0={lon0} +R={radius} +no_defs'
+        lat0 = (attrs1['true_lat_1'] + attrs1['true_lat_2'])/2
+        proj4 = proj_base.format(lat1=attrs1['true_lat_1'], lat2=attrs1['true_lat_2'], lat0=lat0, lon0=attrs1['standard_lon'], radius=attrs1['earth_radius_m'])
+    else:
+        raise ValueError('The projection is not Lambert Conformal')
+
+    return proj4
 
 
 def proc_metservice_nc(nc, lat_coord='south_north', lon_coord='west_east', time_coord='Time', time_var='Times', export_dir=None):
@@ -237,26 +286,4 @@ def metconnect_id_loc(sites=None, mc_server='SQL2012PROD03', mc_db='MetConnect',
     hy_xy = xy_to_gpd('MetConnectID', 'x', 'y', t4)
 
     return hy_xy
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

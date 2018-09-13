@@ -24,5 +24,3 @@ def tsreg(ts, freq=None, interp=False, maxgap=None):
 
     return ts1
 
-
-def dap_to_xarray(
