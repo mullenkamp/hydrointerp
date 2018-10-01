@@ -5,11 +5,14 @@ Created on Wed Sep 12 14:06:09 2018
 @author: MichaelEK
 """
 import xarray as xr
-
 #min_lat = -47
 #max_lat = -40
 #min_lon = 166
 #max_lon = 175
+#nc1 = r'N:\met_service\forecasts\wrf_hourly_precip_nz4kmN-NCEP_2018092112.nc'
+#nc1 = r'N:\met_service\forecasts\wrf_hourly_precip_nz8kmN-NCEP_2018092312.nc'
+#
+#ds1 = xr.open_dataset(nc1)
 
 
 def metservice_select(ms_nc, min_lat, max_lat, min_lon, max_lon):
