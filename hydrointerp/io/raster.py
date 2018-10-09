@@ -11,7 +11,7 @@ import rasterio
 from pycrsx.utils import convert_crs
 
 
-def save_geotiff(df, data_col, crs, x_col='x', y_col='y', time_col=None, nfiles='many', grid_res=None, export_path='geotiff.tif'):
+def save_geotiff(df, crs, data_col, x_col='x', y_col='y', time_col=None, nfiles='many', grid_res=None, export_path='geotiff.tif'):
     """
     Function to convert a dataframe of x, y, and data to a GeoTiff. If the DataFrame has a time_col, then these instances can be saved as multiple bands in the GeoTiff or as multiple GeoTiffs.
 
@@ -49,15 +49,10 @@ def save_geotiff(df, data_col, crs, x_col='x', y_col='y', time_col=None, nfiles=
         raise ValueError('x and y coordinates are not unique!')
 
     ### Determine grid res
-    if grid_res is None:
-        res_df1 = (xy1.loc[0] - xy1).abs()
-        res_df2 = res_df1.replace(0, np.nan).min()
-        x_res = res_df2[x_col]
-        y_res = res_df2[y_col]
-    elif isinstance(grid_res, int):
-        x_res = y_res = grid_res
-    else:
-        raise ValueError('grid_res must either be None or an integer.')
+    res_df1 = (xy1.iloc[0] - xy1).abs()
+    res_df2 = res_df1.replace(0, np.nan).min()
+    x_res = res_df2[x_col]
+    y_res = res_df2[y_col]
 
     ### Make the affline transformation for Rasterio
     trans2 = rasterio.transform.from_origin(xy1[x_col].min() - x_res/2, xy1[y_col].max() + y_res/2, x_res, y_res)

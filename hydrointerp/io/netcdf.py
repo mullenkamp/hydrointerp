@@ -11,7 +11,7 @@ import xarray as xr
 #max_lon = 175
 #nc1 = r'N:\met_service\forecasts\wrf_hourly_precip_nz4kmN-NCEP_2018092112.nc'
 #nc1 = r'N:\met_service\forecasts\wrf_hourly_precip_nz8kmN-NCEP_2018092312.nc'
-#
+
 #ds1 = xr.open_dataset(nc1)
 
 
