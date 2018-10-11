@@ -8,7 +8,7 @@ import fiona
 import xarray as xr
 from scipy.interpolate import griddata, Rbf
 from pycrsx.utils import convert_crs
-from util import pd_grouby_fun
+from hydrointerp.util import pd_grouby_fun
 from pyproj import Proj, transform
 
 

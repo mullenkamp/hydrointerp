@@ -19,7 +19,6 @@ min_lat = -47
 max_lat = -40
 min_lon = 166
 max_lon = 175
-#nc1 = r'N:\met_service\forecasts\wrf_hourly_precip_nz4kmN-NCEP_2018092112.nc'
 nc1 = r'N:\met_service\forecasts\wrf_hourly_precip_nz8kmN-NCEP_2018092312.nc'
 
 from_crs = 4326
@@ -40,7 +39,6 @@ point_shp = r'N:\met_service\point_test1.shp'
 point_site_col = 'site_id'
 site_test = 5
 
-poly_shp = r'E:\ecan\shared\GIS_base\vector\cwms_zones.shp'
 
 ####################################
 ### Import
@@ -67,11 +65,6 @@ both_site = pd.merge(site_points, comp_site_df, on='time')
 
 diff1 = (both_site.precip_rate_x - both_site.precip_rate_y)
 
-
-
-f1 = fiona.open(point_shp)
-
-f2 = fiona.open(poly_shp)
 
 
 
