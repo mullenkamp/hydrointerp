@@ -5,16 +5,17 @@ Raster and spatial interpolation functions.
 import pandas as pd
 import numpy as np
 import geopandas as gpd
+import xarray as xr
 from shapely.geometry import Point
 from scipy.interpolate import griddata, Rbf
 from pycrsx.utils import convert_crs
 from util import pd_grouby_fun
-from pyproj import Proj
+from pyproj import Proj, transform
 
 
-def interp_to_grid(df, time_col, x_col, y_col, data_col, grid_res, from_crs=None, to_crs=None, interp_fun='cubic', agg_ts_fun=None, period=None, digits=2):
+def interp_to_grid(df, time_col, x_col, y_col, data_col, grid_res, from_crs=None, to_crs=None, interp_fun='cubic', agg_ts_fun=None, period=None, digits=2, output='pandas'):
     """
-    Function to interpolate regularly or irregularly spaced values over many time stamps. Each time stamp of spatial values are interpolated independently (2D interpolation as opposed to 3D interpolation). The values can be aggregated in time, but only as a sum or mean. Returns a DataFrame of gridded interpolated results at each time stamp.
+    Function to interpolate regularly or irregularly spaced values over many time stamps. Each time stamp of spatial values are interpolated independently (2D interpolation as opposed to 3D interpolation). The values can be aggregated in time, but but are not interpolated. Returns a DataFrame of gridded interpolated results at each time stamp or an xarray Dataset with the 3 dimensions.
 
     Parameters
     ----------
@@ -42,10 +43,12 @@ def interp_to_grid(df, time_col, x_col, y_col, data_col, grid_res, from_crs=None
         The pandas time series code to resample the data in time (i.e. '2H' for two hours).
     digits: int
         the number of digits to round.
+    output : str
+        If output = 'pandas' then the function will return a pandas DataFrame. If output = 'xarray' then the function will return an xarray Dataset.
 
     Returns
     -------
-    DataFrame
+    DataFrame or Dataset (see output)
     """
 
     df1 = df.copy()
@@ -63,55 +66,57 @@ def interp_to_grid(df, time_col, x_col, y_col, data_col, grid_res, from_crs=None
     else:
         df2 = df1
 
-    time = df2[time_col].sort_values().unique()
+    time = pd.to_datetime(df2[time_col].sort_values().unique())
 
     ### convert to new projection and prepare X/Y data
-    if from_crs is None:
-        x = df2.loc[df2[time_col] == time[0], x_col].values
-        y = df2.loc[df2[time_col] == time[0], y_col].values
-    else:
-        data1 = df2.loc[df2[time_col] == time[0]]
-        from_crs1 = convert_crs(from_crs, pass_str=True)
-        to_crs1 = convert_crs(to_crs, pass_str=True)
-        geometry = [Point(xy) for xy in zip(data1[x_col], data1[y_col])]
-        gpd1 = gpd.GeoDataFrame(data1.index, geometry=geometry, crs=from_crs1)
-        gpd2 = gpd1.to_crs(crs=to_crs1)
-        x = gpd2.geometry.apply(lambda p: p.x).values
-        y = gpd2.geometry.apply(lambda p: p.y).values
+    if from_crs is not None:
+        from_crs1 = Proj(convert_crs(from_crs, pass_str=True), preserve_units=True)
+        to_crs1 = Proj(convert_crs(to_crs, pass_str=True), preserve_units=True)
+        xy1 = list(zip(df2[x_col], df2[y_col]))
+        xy_new1 = list(zip(*[transform(from_crs1, to_crs1, x, y) for x, y in xy1]))
+        df2[x_col] = xy_new1[0]
+        df2[y_col] = xy_new1[1]
 
-    xy = np.column_stack((x, y))
+    df2.sort_values(time_col, inplace=True)
 
-    max_x = np.round(x.max(), xy_digits)
-    min_x = np.round(x.min(), xy_digits)
+    maxes = df2[[x_col, y_col]].max().round(xy_digits)
+    mins = df2[[x_col, y_col]].min().round(xy_digits)
 
-    max_y = np.round(y.max(), xy_digits)
-    min_y = np.round(y.min(), xy_digits)
+    max_x = maxes.loc[x_col]
+    min_x = mins.loc[x_col]
+
+    max_y = maxes.loc[y_col]
+    min_y = mins.loc[y_col]
 
     new_x = np.arange(min_x, max_x, grid_res)
     new_y = np.arange(min_y, max_y, grid_res)
     x_int, y_int = np.meshgrid(new_x, new_y)
 
-    ### Create new df
     x_int2 = x_int.flatten()
     y_int2 = y_int.flatten()
     xy_int = np.column_stack((x_int2, y_int2))
-    time_df = np.repeat(time, len(x_int2))
-    x_df = np.tile(x_int2, len(time))
-    y_df = np.tile(y_int2, len(time))
-    new_df = pd.DataFrame({'time': time_df, 'x': x_df, 'y': y_df, data_col: np.repeat(0, len(time) * len(x_int2))})
 
     ### Grid interp
     new_lst = []
-    for t in pd.to_datetime(time):
+    for t in time:
         print(t)
-        set1 = df2.loc[df2[time_col] == t, data_col]
-        new_z = griddata(xy, set1.values, xy_int, method=interp_fun).round(digits)
+        set1 = df2.loc[df2.time == t]
+        xy = set1[[x_col, y_col]].values
+        new_z = griddata(xy, set1[data_col].values, xy_int, method=interp_fun).round(digits)
         new_z[new_z <= 0] = 0
         new_lst.extend(new_z.tolist())
-    new_df.loc[:, data_col] = new_lst
+
+    if output == 'xarray':
+        ar1 = np.array(new_lst).reshape(len(new_x), len(new_y), len(time))
+        new1 = xr.DataArray(ar1, coords=[new_x, new_y, time], dims=['x', 'y', 'time'], name=data_col).to_dataset()
+    elif output == 'pandas':
+        time_df = np.repeat(time, len(x_int2))
+        x_df = np.tile(x_int2, len(time))
+        y_df = np.tile(y_int2, len(time))
+        new1 = pd.DataFrame({'time': time_df, 'x': x_df, 'y': y_df, data_col: new_lst}).dropna().set_index(['time', 'x', 'y'])
 
     ### Export results
-    return new_df[new_df[data_col].notnull()]
+    return new1
 
 
 def interp_to_points(df, time_col, x_col, y_col, data_col, point_shp, point_site_col, from_crs, to_crs=None, interp_fun='cubic', agg_ts_fun=None, period=None, digits=2):
@@ -157,10 +162,8 @@ def interp_to_points(df, time_col, x_col, y_col, data_col, point_shp, point_site
     ### Read in points
     if isinstance(point_shp, str) & isinstance(point_site_col, str):
         points = gpd.read_file(point_shp)[[point_site_col, 'geometry']]
-        to_crs1 = points.crs
     elif isinstance(point_shp, gpd.GeoDataFrame) & isinstance(point_site_col, str):
         points = point_shp[[point_site_col, 'geometry']]
-        to_crs1 = points.crs
     else:
         raise ValueError('point_shp must be a str path to a shapefile or a GeoDataFrame and point_site_col must be a str.')
 
@@ -175,22 +178,20 @@ def interp_to_points(df, time_col, x_col, y_col, data_col, point_shp, point_site
     else:
         df2 = df1
 
-    time = df2[time_col].sort_values().unique()
+    time = pd.to_datetime(df2[time_col].sort_values().unique())
 
     ### Convert input data to crs of points shp and create input xy
-    data1 = df2.loc[df2[time_col] == time[0]]
-    from_crs1 = convert_crs(from_crs, pass_str=True)
-
     if to_crs is not None:
         to_crs1 = convert_crs(to_crs, pass_str=True)
         points = points.to_crs(to_crs1)
-    geometry = [Point(xy) for xy in zip(data1[x_col], data1[y_col])]
-    gpd1 = gpd.GeoDataFrame(data1.index, geometry=geometry, crs=from_crs1)
-    gpd2 = gpd1.to_crs(crs=to_crs1)
-    x = gpd2.geometry.apply(lambda p: p.x).values
-    y = gpd2.geometry.apply(lambda p: p.y).values
-
-    xy = np.column_stack((x, y))
+    else:
+        to_crs1 = points.crs
+    from_crs1 = Proj(convert_crs(from_crs, pass_str=True), preserve_units=True)
+    to_crs2 = Proj(to_crs1, preserve_units=True)
+    xy1 = list(zip(df2[x_col], df2[y_col]))
+    xy_new1 = list(zip(*[transform(from_crs1, to_crs2, x, y) for x, y in xy1]))
+    df2[x_col] = xy_new1[0]
+    df2[y_col] = xy_new1[1]
 
     ### Prepare the x and y of the points geodataframe output
     x_int = points.geometry.apply(lambda p: p.x).values
@@ -199,24 +200,24 @@ def interp_to_points(df, time_col, x_col, y_col, data_col, point_shp, point_site
 
     xy_int = np.column_stack((x_int, y_int))
 
+    new_lst = []
+    for t in time:
+        print(t)
+        set1 = df2.loc[df2.time == t]
+        xy = set1[[x_col, y_col]].values
+        new_z = griddata(xy, set1[data_col].values, xy_int, method=interp_fun).round(digits)
+        new_z[new_z <= 0] = 0
+        new_lst.extend(new_z.tolist())
+
     ### Create new df
     sites_ar = np.tile(sites, len(time))
     time_ar = np.repeat(time, len(xy_int))
     x_ar = np.tile(x_int, len(time))
     y_ar = np.tile(y_int, len(time))
-    new_df = pd.DataFrame({'site': sites_ar, 'time': time_ar, 'x': x_ar, 'y': y_ar, data_col: np.repeat(0, len(time) * len(xy_int))})
-
-    new_lst = []
-    for t in pd.to_datetime(time):
-        print(t)
-        set1 = df2.loc[df2[time_col] == t, data_col]
-        new_z = griddata(xy, set1.values, xy_int, method=interp_fun).round(digits)
-        new_z[new_z <= 0] = 0
-        new_lst.extend(new_z.tolist())
-    new_df.loc[:, data_col] = new_lst
+    new_df = pd.DataFrame({'site': sites_ar, 'time': time_ar, 'x': x_ar, 'y': y_ar, data_col: new_lst}).set_index(['time', 'x', 'y'])
 
     ### Export results
-    return new_df[new_df[data_col].notnull()]
+    return new_df
 
 
 def grid_resample(x, y, z, x_int, y_int, digits=3, method='multiquadric'):

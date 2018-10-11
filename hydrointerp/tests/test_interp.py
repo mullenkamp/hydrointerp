@@ -36,7 +36,7 @@ period = None
 digits = 2
 
 point_shp = r'N:\met_service\point_test1.shp'
-
+point_site_col = 'site_id'
 site_test = 5
 
 ####################################
@@ -51,7 +51,7 @@ ms_df1 = ms_df[(ms_df.time <= '2018-09-24 12:00') & (ms_df.time >= '2018-09-24')
 
 new_df = interp_to_grid(ms_df1, 'time', 'longitude', 'latitude', 'precip_rate', grid_res, from_crs, to_crs, interp_fun, agg_ts_fun='sum', period='2H')
 
-new_points = interp_to_points(ms_df1, 'time', 'longitude', 'latitude', 'precip_rate', point_shp, 'site_id', from_crs)
+new_points = interp_to_points(ms_df1, 'time', 'longitude', 'latitude', 'precip_rate', point_shp, point_site_col, from_crs)
 
 site_points = new_points[new_points.site == site_test]
 
