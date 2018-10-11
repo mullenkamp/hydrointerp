@@ -8,6 +8,7 @@ import pandas as pd
 from ..interp2d import interp_to_grid, interp_to_points
 from ..io.netcdf import metservice_select, metservice_to_df
 from ..io.raster import save_geotiff
+import fiona
 
 pd.options.display.max_columns = 10
 
@@ -39,6 +40,8 @@ point_shp = r'N:\met_service\point_test1.shp'
 point_site_col = 'site_id'
 site_test = 5
 
+poly_shp = r'E:\ecan\shared\GIS_base\vector\cwms_zones.shp'
+
 ####################################
 ### Import
 
@@ -51,7 +54,7 @@ ms_df1 = ms_df[(ms_df.time <= '2018-09-24 12:00') & (ms_df.time >= '2018-09-24')
 
 new_df = interp_to_grid(ms_df1, 'time', 'longitude', 'latitude', 'precip_rate', grid_res, from_crs, to_crs, interp_fun, agg_ts_fun='sum', period='2H')
 
-new_points = interp_to_points(ms_df1, 'time', 'longitude', 'latitude', 'precip_rate', point_shp, point_site_col, from_crs)
+new_points = interp_to_points(ms_df1, 'time', 'longitude', 'latitude', 'precip_rate', point_shp, point_site_col, from_crs, agg_ts_fun='sum', period='2H')
 
 site_points = new_points[new_points.site == site_test]
 
@@ -66,9 +69,9 @@ diff1 = (both_site.precip_rate_x - both_site.precip_rate_y)
 
 
 
+f1 = fiona.open(point_shp)
 
-
-
+f2 = fiona.open(poly_shp)
 
 
 

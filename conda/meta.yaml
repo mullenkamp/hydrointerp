@@ -37,13 +37,11 @@ requirements:
   run:
     - python
     - pandas
-    - geopandas
+    - fiona
     - scipy
     - pycrsx
-    - hydrolm
     - xarray
     - rasterio
-    - pydap
 
 test:
   imports:

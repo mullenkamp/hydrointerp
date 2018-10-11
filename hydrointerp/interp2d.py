@@ -4,9 +4,8 @@ Raster and spatial interpolation functions.
 """
 import pandas as pd
 import numpy as np
-import geopandas as gpd
+import fiona
 import xarray as xr
-from shapely.geometry import Point
 from scipy.interpolate import griddata, Rbf
 from pycrsx.utils import convert_crs
 from util import pd_grouby_fun
@@ -119,7 +118,7 @@ def interp_to_grid(df, time_col, x_col, y_col, data_col, grid_res, from_crs=None
     return new1
 
 
-def interp_to_points(df, time_col, x_col, y_col, data_col, point_shp, point_site_col, from_crs, to_crs=None, interp_fun='cubic', agg_ts_fun=None, period=None, digits=2):
+def interp_to_points(df, time_col, x_col, y_col, data_col, point_path, point_site_col, from_crs, to_crs=None, interp_fun='cubic', agg_ts_fun=None, period=None, digits=2):
     """
     Function to take a dataframe of z values and interate through and resample both in time and space. Returns a DataFrame in the shape of the points from the point_shp.
 
@@ -135,8 +134,8 @@ def interp_to_points(df, time_col, x_col, y_col, data_col, point_shp, point_site
         The y column name.
     data_col: str
         The data column name.
-    point_shp: str or GeoDataFrame
-        Path to shapefile of points to be interpolated or a GeoPandas GeoDataFrame.
+    point_path: str
+        Path to geometry file of points to be interpolated (e.g. shapefile). Can be anything that fiona/gdal can open.
     point_site_col: str
         The column name of the site names/numbers of the point_shp.
     grid_res: int
@@ -160,12 +159,12 @@ def interp_to_points(df, time_col, x_col, y_col, data_col, point_shp, point_site
     """
 
     ### Read in points
-    if isinstance(point_shp, str) & isinstance(point_site_col, str):
-        points = gpd.read_file(point_shp)[[point_site_col, 'geometry']]
-    elif isinstance(point_shp, gpd.GeoDataFrame) & isinstance(point_site_col, str):
-        points = point_shp[[point_site_col, 'geometry']]
+    if isinstance(point_path, str) & isinstance(point_site_col, str):
+        with fiona.open(point_path) as f1:
+            point_crs = Proj(f1.crs, preserve_units=True)
+            points = {p['properties'][point_site_col]: p['geometry']['coordinates'] for p in f1 if p['geometry']['type'] == 'Point'}
     else:
-        raise ValueError('point_shp must be a str path to a shapefile or a GeoDataFrame and point_site_col must be a str.')
+        raise ValueError('point_path must be a str path to a geometry file (e.g. shapefile) and point_site_col must be a str.')
 
     ### Create the grids
     df1 = df.copy()
@@ -182,10 +181,10 @@ def interp_to_points(df, time_col, x_col, y_col, data_col, point_shp, point_site
 
     ### Convert input data to crs of points shp and create input xy
     if to_crs is not None:
-        to_crs1 = convert_crs(to_crs, pass_str=True)
-        points = points.to_crs(to_crs1)
+        to_crs1 = Proj(convert_crs(to_crs, pass_str=True), preserve_units=True)
+        points = {p: transform(point_crs, to_crs1, points[p][0], points[p][1]) for p in points}
     else:
-        to_crs1 = points.crs
+        to_crs1 = point_crs
     from_crs1 = Proj(convert_crs(from_crs, pass_str=True), preserve_units=True)
     to_crs2 = Proj(to_crs1, preserve_units=True)
     xy1 = list(zip(df2[x_col], df2[y_col]))
@@ -194,11 +193,8 @@ def interp_to_points(df, time_col, x_col, y_col, data_col, point_shp, point_site
     df2[y_col] = xy_new1[1]
 
     ### Prepare the x and y of the points geodataframe output
-    x_int = points.geometry.apply(lambda p: p.x).values
-    y_int = points.geometry.apply(lambda p: p.y).values
-    sites = points[point_site_col]
-
-    xy_int = np.column_stack((x_int, y_int))
+    sites = list(points.keys())
+    xy_int = np.array(list(points.values()))
 
     new_lst = []
     for t in time:
@@ -212,8 +208,8 @@ def interp_to_points(df, time_col, x_col, y_col, data_col, point_shp, point_site
     ### Create new df
     sites_ar = np.tile(sites, len(time))
     time_ar = np.repeat(time, len(xy_int))
-    x_ar = np.tile(x_int, len(time))
-    y_ar = np.tile(y_int, len(time))
+    x_ar = np.tile(xy_int.T[0], len(time))
+    y_ar = np.tile(xy_int.T[1], len(time))
     new_df = pd.DataFrame({'site': sites_ar, 'time': time_ar, 'x': x_ar, 'y': y_ar, data_col: new_lst}).set_index(['time', 'x', 'y'])
 
     ### Export results
