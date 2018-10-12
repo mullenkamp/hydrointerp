@@ -5,10 +5,9 @@ Created on Tue Oct  9 11:22:22 2018
 @author: michaelek
 """
 import pandas as pd
-from ..interp2d import interp_to_grid, interp_to_points
-from ..io.netcdf import metservice_select, metservice_to_df
-from ..io.raster import save_geotiff
-import fiona
+from hydrointerp.interp2d import interp_to_grid, interp_to_points
+from hydrointerp.io.netcdf import metservice_select, metservice_to_df
+from hydrointerp.io.raster import save_geotiff
 
 pd.options.display.max_columns = 10
 
@@ -54,16 +53,7 @@ new_df = interp_to_grid(ms_df1, 'time', 'longitude', 'latitude', 'precip_rate', 
 
 new_points = interp_to_points(ms_df1, 'time', 'longitude', 'latitude', 'precip_rate', point_shp, point_site_col, from_crs, agg_ts_fun='sum', period='2H')
 
-site_points = new_points[new_points.site == site_test]
 
-approx_x = new_df.x[(new_df.x - site_points.x.iloc[0]).abs().idxmin()]
-approx_y = new_df.y[(new_df.y - site_points.y.iloc[0]).abs().idxmin()]
-
-comp_site_df = new_df[(new_df.x == approx_x) & (new_df.y == approx_y)]
-
-both_site = pd.merge(site_points, comp_site_df, on='time')
-
-diff1 = (both_site.precip_rate_x - both_site.precip_rate_y)
 
 
 

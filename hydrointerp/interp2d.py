@@ -186,9 +186,8 @@ def interp_to_points(df, time_col, x_col, y_col, data_col, point_path, point_sit
     else:
         to_crs1 = point_crs
     from_crs1 = Proj(convert_crs(from_crs, pass_str=True), preserve_units=True)
-    to_crs2 = Proj(to_crs1, preserve_units=True)
     xy1 = list(zip(df2[x_col], df2[y_col]))
-    xy_new1 = list(zip(*[transform(from_crs1, to_crs2, x, y) for x, y in xy1]))
+    xy_new1 = list(zip(*[transform(from_crs1, to_crs1, x, y) for x, y in xy1]))
     df2[x_col] = xy_new1[0]
     df2[y_col] = xy_new1[1]
 
