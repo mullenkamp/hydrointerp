@@ -18,29 +18,29 @@ def interp_to_grid(df, time_col, x_col, y_col, data_col, grid_res, from_crs=None
 
     Parameters
     ----------
-    df: DataFrame
+    df : DataFrame
         DataFrame containing four columns as shown in the below parameters.
-    time_col: str
+    time_col : str
         The time column name.
-    x_col: str
+    x_col : str
         The x column name.
-    y_col: str
+    y_col : str
         The y column name.
-    data_col: str
+    data_col : str
         The data column name.
-    grid_res: int
+    grid_res : int
         The resulting grid resolution in meters (or the unit of the final projection).
-    from_crs: int or str or None
+    from_crs : int or str or None
         The projection info for the input data if the result should be reprojected to the to_crs projection (either a proj4 str or epsg int).
-    to_crs: int or str or None
+    to_crs : int or str or None
         The projection for the output data similar to from_crs.
-    interp_fun: str
+    interp_fun : str
         The scipy griddata interpolation function to be applied (see `https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html`_).
-    agg_ts_fun: str or None
+    agg_ts_fun : str or None
         The pandas time series resampling function to resample the data in time (either 'mean' or 'sum'). If None, then no time resampling.
-    period: str or None
+    period : str or None
         The pandas time series code to resample the data in time (i.e. '2H' for two hours).
-    digits: int
+    digits : int
         the number of digits to round.
     output : str
         If output = 'pandas' then the function will return a pandas DataFrame. If output = 'xarray' then the function will return an xarray Dataset.
@@ -124,33 +124,33 @@ def interp_to_points(df, time_col, x_col, y_col, data_col, point_path, point_sit
 
     Parameters
     ----------
-    df: DataFrame
+    df : DataFrame
         DataFrame containing four columns as shown in the below parameters.
-    time_col: str
+    time_col : str
         The time column name.
-    x_col: str
+    x_col : str
         The x column name.
-    y_col: str
+    y_col : str
         The y column name.
-    data_col: str
+    data_col : str
         The data column name.
-    point_path: str
+    point_path : str
         Path to geometry file of points to be interpolated (e.g. shapefile). Can be anything that fiona/gdal can open.
-    point_site_col: str
+    point_site_col : str
         The column name of the site names/numbers of the point_shp.
-    grid_res: int
+    grid_res : int
         The resulting grid resolution in meters (or the unit of the final projection).
-    from_crs: int or str
+    from_crs : int or str
         The projection info for the input data if the result should be reprojected to the to_crs projection (either a proj4 str or epsg int).
-    to_crs: int or str
+    to_crs : int or str
         The projection for the output data similar to from_crs.
-    interp_fun: str
+    interp_fun : str
         The scipy griddata interpolation function to be applied (see `https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html`_).
-    agg_ts_fun: str or None
+    agg_ts_fun : str or None
         The pandas time series resampling function to resample the data in time (either 'mean' or 'sum'). If None, then no time resampling.
-    period: str or None
+    period : str or None
         The pandas time series code to resample the data in time (i.e. '2H' for two hours).
-    digits: int
+    digits : int
         the number of digits to round.
 
     Returns
