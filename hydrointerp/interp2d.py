@@ -8,11 +8,10 @@ import fiona
 import xarray as xr
 from scipy.interpolate import griddata, Rbf
 from pycrsx.utils import convert_crs
-from hydrointerp.util import pd_grouby_fun
 from pyproj import Proj, transform
 
 
-def interp_to_grid(df, time_col, x_col, y_col, data_col, grid_res, from_crs=None, to_crs=None, interp_fun='cubic', agg_ts_fun=None, period=None, digits=2, output='pandas'):
+def interp_to_grid(df, time_col, x_col, y_col, data_col, grid_res, from_crs=None, to_crs=None, interp_fun='cubic', digits=2, output='pandas'):
     """
     Function to interpolate regularly or irregularly spaced values over many time stamps. Each time stamp of spatial values are interpolated independently (2D interpolation as opposed to 3D interpolation). The values can be aggregated in time, but but are not interpolated. Returns a DataFrame of gridded interpolated results at each time stamp or an xarray Dataset with the 3 dimensions.
 
@@ -36,12 +35,8 @@ def interp_to_grid(df, time_col, x_col, y_col, data_col, grid_res, from_crs=None
         The projection for the output data similar to from_crs.
     interp_fun : str
         The scipy griddata interpolation function to be applied (see `https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html`_).
-    agg_ts_fun : str or None
-        The pandas time series resampling function to resample the data in time (either 'mean' or 'sum'). If None, then no time resampling.
-    period : str or None
-        The pandas time series code to resample the data in time (i.e. '2H' for two hours).
     digits : int
-        the number of digits to round.
+        The number of digits to round the results.
     output : str
         If output = 'pandas' then the function will return a pandas DataFrame. If output = 'xarray' then the function will return an xarray Dataset.
 
@@ -50,25 +45,17 @@ def interp_to_grid(df, time_col, x_col, y_col, data_col, grid_res, from_crs=None
     DataFrame or Dataset (see output)
     """
 
-    df1 = df.copy()
+    df2 = df.copy()
 
     if (to_crs == 4326) or ((from_crs == 4326) and (to_crs is None)):
         xy_digits = 5
     else:
         xy_digits = 0
 
-    ### Resample the time series data
-    if isinstance(agg_ts_fun, str):
-        df1a = df1.set_index(time_col)
-        fun1 = pd_grouby_fun(df1a, agg_ts_fun)
-        df2 = fun1(df1a.groupby([pd.Grouper(freq=period), pd.Grouper(y_col), pd.Grouper(x_col)])[data_col]).reset_index()
-    else:
-        df2 = df1
-
     time = pd.to_datetime(df2[time_col].sort_values().unique())
 
     ### convert to new projection and prepare X/Y data
-    if from_crs is not None:
+    if (from_crs is not None) & (to_crs is not None):
         from_crs1 = Proj(convert_crs(from_crs, pass_str=True), preserve_units=True)
         to_crs1 = Proj(convert_crs(to_crs, pass_str=True), preserve_units=True)
         xy1 = list(zip(df2[x_col], df2[y_col]))
@@ -118,7 +105,7 @@ def interp_to_grid(df, time_col, x_col, y_col, data_col, grid_res, from_crs=None
     return new1
 
 
-def interp_to_points(df, time_col, x_col, y_col, data_col, point_path, point_site_col, from_crs, to_crs=None, interp_fun='cubic', agg_ts_fun=None, period=None, digits=2):
+def interp_to_points(df, time_col, x_col, y_col, data_col, point_path, point_site_col, from_crs, to_crs=None, interp_fun='cubic', digits=2):
     """
     Function to take a dataframe of z values and interate through and resample both in time and space. Returns a DataFrame in the shape of the points from the point_shp.
 
@@ -146,12 +133,8 @@ def interp_to_points(df, time_col, x_col, y_col, data_col, point_path, point_sit
         The projection for the output data similar to from_crs.
     interp_fun : str
         The scipy griddata interpolation function to be applied (see `https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html`_).
-    agg_ts_fun : str or None
-        The pandas time series resampling function to resample the data in time (either 'mean' or 'sum'). If None, then no time resampling.
-    period : str or None
-        The pandas time series code to resample the data in time (i.e. '2H' for two hours).
     digits : int
-        the number of digits to round.
+        The number of digits to round the results.
 
     Returns
     -------
@@ -167,15 +150,7 @@ def interp_to_points(df, time_col, x_col, y_col, data_col, point_path, point_sit
         raise ValueError('point_path must be a str path to a geometry file (e.g. shapefile) and point_site_col must be a str.')
 
     ### Create the grids
-    df1 = df.copy()
-
-    ### Resample the time series data
-    if isinstance(agg_ts_fun, str):
-        df1a = df1.set_index(time_col)
-        fun1 = pd_grouby_fun(df1a, agg_ts_fun)
-        df2 = fun1(df1a.groupby([pd.Grouper(freq=period), pd.Grouper(y_col), pd.Grouper(x_col)])[data_col]).reset_index()
-    else:
-        df2 = df1
+    df2 = df.copy()
 
     time = pd.to_datetime(df2[time_col].sort_values().unique())
 

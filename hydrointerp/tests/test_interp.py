@@ -8,6 +8,7 @@ import pandas as pd
 from hydrointerp.interp2d import interp_to_grid, interp_to_points
 from hydrointerp.io.netcdf import metservice_select, metservice_to_df
 from hydrointerp.io.raster import save_geotiff
+from hydrointerp.util import grp_ts_agg
 
 pd.options.display.max_columns = 10
 
@@ -30,9 +31,9 @@ x_col = 'longitude'
 y_col = 'latitude'
 data_col = 'precip_rate'
 interp_fun = 'cubic'
-agg_ts_fun = None
-period = None
 digits = 2
+
+ts_resample_code = '4H'
 
 point_shp = r'N:\met_service\point_test1.shp'
 point_site_col = 'site_id'
@@ -47,11 +48,16 @@ ms1 = metservice_select(nc1, min_lat, max_lat, min_lon, max_lon)
 ms_df = metservice_to_df(ms1, True).dropna().reset_index()
 ms_df1 = ms_df[(ms_df.time <= '2018-09-24 12:00') & (ms_df.time >= '2018-09-24')]
 
-### Interp/resample
+### Resample in time
+ms_df2 = grp_ts_agg(ms_df1, ['longitude', 'latitude'], 'time', ts_resample_code, 'left', 'right')[data_col].sum().reset_index()
 
-new_df = interp_to_grid(ms_df1, 'time', 'longitude', 'latitude', 'precip_rate', grid_res, from_crs, to_crs, interp_fun, agg_ts_fun='sum', period='2H')
+### Interp
 
-new_points = interp_to_points(ms_df1, 'time', 'longitude', 'latitude', 'precip_rate', point_shp, point_site_col, from_crs, agg_ts_fun='sum', period='2H')
+new_df = interp_to_grid(ms_df2, 'time', 'longitude', 'latitude', 'precip_rate', grid_res, from_crs, to_crs, interp_fun)
+
+new_ds = interp_to_grid(ms_df2, 'time', 'longitude', 'latitude', 'precip_rate', grid_res, from_crs, to_crs, interp_fun, output='xarray')
+
+new_points = interp_to_points(ms_df2, 'time', 'longitude', 'latitude', 'precip_rate', point_shp, point_site_col, from_crs)
 
 
 
