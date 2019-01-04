@@ -6,9 +6,9 @@ Created on Tue Oct  9 11:22:22 2018
 """
 import pandas as pd
 from hydrointerp.interp2d import interp_to_grid, interp_to_points
-from hydrointerp.io.netcdf import metservice_select, metservice_to_df
 from hydrointerp.io.raster import save_geotiff
 from hydrointerp.util import grp_ts_agg
+from nzmetservice import select_bounds, to_df
 
 pd.options.display.max_columns = 10
 
@@ -43,9 +43,9 @@ site_test = 5
 ####################################
 ### Import
 
-ms1 = metservice_select(nc1, min_lat, max_lat, min_lon, max_lon)
+ms1 = select_bounds(nc1, min_lat, max_lat, min_lon, max_lon)
 
-ms_df = metservice_to_df(ms1, True).dropna().reset_index()
+ms_df = to_df(ms1, True).dropna().reset_index()
 ms_df1 = ms_df[(ms_df.time <= '2018-09-24 12:00') & (ms_df.time >= '2018-09-24')]
 
 ### Resample in time

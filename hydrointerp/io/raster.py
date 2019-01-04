@@ -7,8 +7,12 @@ Created on Mon Sep 10 15:04:56 2018
 import os
 import pandas as pd
 import numpy as np
-import rasterio
 from pycrsx.utils import convert_crs
+
+try:
+    import rasterio
+except:
+    print('Install rasterio for raster functions')
 
 
 def save_geotiff(df, crs, data_col, x_col='x', y_col='y', time_col=None, nfiles='many', grid_res=None, export_path='geotiff.tif'):

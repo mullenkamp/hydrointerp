@@ -18,7 +18,7 @@ version = '1.0.9'
 if os.environ.get('READTHEDOCS', False) == 'True':
     INSTALL_REQUIRES = []
 else:
-    INSTALL_REQUIRES = ['pandas', 'fiona', 'scipy', 'pycrsx', 'xarray', 'rasterio', 'pyproj']
+    INSTALL_REQUIRES = ['pandas', 'fiona', 'scipy', 'pycrsx', 'xarray', 'pyproj']
 
 # Get the long description from the README file
 with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:

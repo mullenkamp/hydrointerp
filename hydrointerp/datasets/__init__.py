@@ -4,8 +4,8 @@ import os
 __all__ = ['available', 'get_path']
 
 _module_path = os.path.dirname(__file__)
-_available_csv = {p.split('.')[0]: p for p in os.listdir(_module_path) if p.endswith('.csv')}
-available = list(_available_csv.keys())
+_available_data = {p.split('.')[0]: p for p in os.listdir(_module_path) if p.endswith('.nc')}
+available = list(_available_data.keys())
 
 
 def get_path(dataset):
@@ -15,13 +15,13 @@ def get_path(dataset):
     Parameters
     ----------
     dataset : str
-        The name of the dataset. See ``geopandas.datasets.available`` for
+        The name of the dataset. See ``nzmetservice.datasets.available`` for
         all options.
 
     """
-    if dataset in _available_csv:
+    if dataset in _available_data:
         return os.path.abspath(
-            os.path.join(_module_path, _available_csv[dataset]))
+            os.path.join(_module_path, _available_data[dataset]))
     else:
         msg = "The dataset '{data}' is not available".format(data=dataset)
         raise ValueError(msg)
