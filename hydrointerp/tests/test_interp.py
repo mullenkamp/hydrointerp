@@ -5,6 +5,7 @@ Created on Tue Oct  9 11:22:22 2018
 @author: michaelek
 """
 import pandas as pd
+import xarray as xr
 from hydrointerp.interp2d import interp_to_grid, interp_to_points
 from hydrointerp.io.raster import save_geotiff
 from hydrointerp.util import grp_ts_agg
@@ -50,6 +51,7 @@ ms_df1 = ms_df[(ms_df.time <= '2018-09-24 12:00') & (ms_df.time >= '2018-09-24')
 
 ### Resample in time
 ms_df2 = grp_ts_agg(ms_df1, ['longitude', 'latitude'], 'time', ts_resample_code, 'left', 'right')[data_col].sum().reset_index()
+
 
 ### Interp
 
