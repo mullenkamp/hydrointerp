@@ -55,7 +55,7 @@ def grp_ts_agg(df, grp_col, ts_col, freq_code, closed='left', label='left', disc
     df : DataFrame
         Dataframe with a datetime column.
     grp_col : str or list of str
-        Column name that contains the sites.
+        Column name(s) to group by (in addition to the datetime column).
     ts_col : str
         The column name of the datetime column.
     freq_code : str

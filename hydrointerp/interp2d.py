@@ -11,23 +11,23 @@ from pycrsx.utils import convert_crs
 from pyproj import Proj, transform
 
 
-def interp_to_grid(df, time_col, x_col, y_col, data_col, grid_res, from_crs=None, to_crs=None, interp_fun='cubic', digits=2, output='pandas'):
+def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs=None, to_crs=None, order=3, mode='constant', cval=0.0, prefilter=True, digits=2, output='pandas'):
     """
     Function to interpolate regularly or irregularly spaced values over many time stamps. Each time stamp of spatial values are interpolated independently (2D interpolation as opposed to 3D interpolation). The values can be aggregated in time, but but are not interpolated. Returns a DataFrame of gridded interpolated results at each time stamp or an xarray Dataset with the 3 dimensions.
 
     Parameters
     ----------
-    df : DataFrame
-        DataFrame containing four columns as shown in the below parameters.
-    time_col : str
-        The time column name.
-    x_col : str
-        The x column name.
-    y_col : str
-        The y column name.
-    data_col : str
-        The data column name.
-    grid_res : int
+    grid : DataFrame or Dataset
+        A pandas DataFrame or an xarray Dataset.
+    time_name : str
+        If grid is a DataFrame, then time_name is the time column name. If grid is a Dataset, then time_name is the time coordinate name.
+    x_name : str
+        If grid is a DataFrame, then x_name is the x column name. If grid is a Dataset, then x_name is the x coordinate name.
+    y_name : str
+        If grid is a DataFrame, then y_name is the y column name. If grid is a Dataset, then y_name is the y coordinate name.
+    data_name : str
+        If grid is a DataFrame, then data_name is the data column name. If grid is a Dataset, then data_name is the data variable name.
+    grid_res : int or float
         The resulting grid resolution in meters (or the unit of the final projection).
     from_crs : int or str or None
         The projection info for the input data if the result should be reprojected to the to_crs projection (either a proj4 str or epsg int).
@@ -38,12 +38,29 @@ def interp_to_grid(df, time_col, x_col, y_col, data_col, grid_res, from_crs=None
     digits : int
         The number of digits to round the results.
     output : str
-        If output = 'pandas' then the function will return a pandas DataFrame. If output = 'xarray' then the function will return an xarray Dataset.
+        If output = 'DataFrame' then the function will return a pandas DataFrame. If output = 'Dataset' then the function will return an xarray Dataset.
 
     Returns
     -------
     DataFrame or Dataset (see output)
     """
+    if isinstance(grid, xr.Dataset):
+        da1 = grid[data_name]
+        da2 = da1.transpose(time_name, x_name, y_name)
+        arr1 = da2.values
+        np.nan_to_num(arr1, False)
+        x = da1[x_name].values
+        y = da1[y_name].values
+        xy_orig_pts = np.dstack(np.meshgrid(x, y)).reshape(-1, 2)
+    elif isinstance(grid, pd.DataFrame):
+        grouped = grid.set_index([time_name, x_name, y_name])[data_name].sort_index()
+        shape = tuple(len(i) for i in grouped.index.levels)
+        arr1 = np.zeros(shape, grouped.dtype.type)
+        arr1[tuple(grouped.index.labels)] = grouped.values.flat
+        xy_orig_pts = np.around(grouped[grouped.index[0][0]].index.to_frame().values, 2)
+
+
+
 
     df2 = df.copy()
 
