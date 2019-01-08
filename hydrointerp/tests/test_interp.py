@@ -4,6 +4,7 @@ Created on Tue Oct  9 11:22:22 2018
 
 @author: michaelek
 """
+from time import time
 import numpy as np
 import pandas as pd
 import xarray as xr
@@ -67,17 +68,44 @@ new_points = interp_to_points(ms_df2, 'time', 'longitude', 'latitude', 'precip_r
 ###################################
 ### Testing
 
+nc2 = r'N:\nasa\precip\gpm_3IMERGHHL_v07_20190101-20190106.nc4'
 time_name = 'time'
 x_name = 'lon'
 y_name = 'lat'
 data_name = 'precipitationCal'
+from_crs = 4326
+to_crs = 2193
+grid_res = 1000
+bbox=None
+order=3
+extrapolation='constant'
+cval=np.nan
+digits = 2
+min_lat = -48
+max_lat = -41
+min_lon = 170
+max_lon = 178
+min_val=0
 
 grid1 = xr.open_dataset(nc2)
 
-grid = grid1.copy()
+grid = grid1.where((grid1[y_name] >= min_lat) & (grid1[y_name] <= max_lat) & (grid1[x_name] >= min_lon) & (grid1[x_name] <= max_lon), drop=True).copy()
 grid1.close()
 
-df1 = grid.to_dataframe().reset_index()
+grid2d = grid.isel(time=280)[data_name]
+
+grid2d.plot.pcolormesh(x='lon', y='lat')
+
+start1 = time()
+interp1 = grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs, to_crs, bbox, order, extrapolation, cval, digits, min_val)
+end1 = time()
+end1 - start1
+
+output2d = interp1.isel(time=280)[data_name]
+
+output2d.plot.pcolormesh(x='x', y='y')
+
+grid = grid.to_dataframe().reset_index()
 
 x = da1[x_name].values
 y = da1[y_name].values
@@ -114,12 +142,17 @@ df = pd.DataFrame({'x': [1, 2, 1, 3, 1, 2, 3, 1, 2],
 grouped = df.groupby(['z', 'y', 'x'])['value'].mean()
 
 
+a = np.arange(12.).reshape((4, 3))
 
 
 
 
-
-
+dx, dy = 0.4, 0.4
+xmax, ymax = 2, 4
+x = np.arange(-xmax, xmax, dx)
+y = np.arange(-ymax, ymax, dy)
+X, Y = np.meshgrid(x, y)
+Z = np.exp(-(2*X)**2 - (Y/2)**2)
 
 
 

@@ -45,8 +45,8 @@ zgrid = np.linspace(0,1, Ndata+2)
 
 f_2d_grid = f_2d(xgrid.reshape(-1,1), ygrid)
 
-plt.imshow(f_2d_grid)
-plt.title(u'image of a 2D function ({}² pts)'.format(Ndata));
+#plt.imshow(f_2d_grid)
+#plt.title(u'image of a 2D function ({}² pts)'.format(Ndata));
 
 #f_2d_grid.shape
 
@@ -130,11 +130,16 @@ scipy.interpolate.interpn
 
 
 
+a = np.arange(6).reshape(2,3)
+it = np.nditer(a, flags=['multi_index'])
+
+while not it.finished:
+    print(it[0], it.multi_index),
+    it.iternext()
 
 
-
-
-
+for b in a:
+    print(b)
 
 
 
