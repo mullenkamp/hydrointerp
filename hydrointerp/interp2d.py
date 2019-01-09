@@ -15,6 +15,29 @@ from scipy.ndimage import map_coordinates
 from util import grid_xy_to_map_coords, point_xy_to_map_coords, map_coords_to_xy
 
 
+def process_grid_input(input_data, time_name, x_name, y_name, data_name, input_digits):
+    if isinstance(input_data, pd.DataFrame):
+        grouped = input_data.set_index([time_name, y_name, x_name])[data_name].sort_index()
+        input_data = grouped.to_xarray().to_dataset()
+    if isinstance(input_data, xr.Dataset):
+        da1 = input_data[data_name]
+        da2 = da1.transpose(time_name, y_name, x_name).sortby([time_name, y_name, x_name])
+        arr1 = da2.values
+        np.nan_to_num(arr1, False)
+        x = da1[x_name].values
+        y = da1[y_name].values
+        time1 = da1[time_name].values
+        xy_orig_pts = np.dstack(np.meshgrid(y, x)).reshape(-1, 2)
+
+    return arr1, xy_orig_pts, time1
+
+
+def process_point_input(df, time_name, x_name, y_name, data_name, input_digits):
+    xy1 = list(zip(df[x_name], df[y_name]))
+    xy_new1 = list(zip(*[transform(from_crs1, to_crs1, x, y) for x, y in xy1]))
+    time = pd.to_datetime(df2[time_col].sort_values().unique())
+
+
 def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs, to_crs=None, bbox=None, order=3, extrapolation='constant', cval=np.nan, digits=2, min_val=None):
     """
     Function to interpolate regularly or irregularly spaced values over many time stamps. Each time stamp of spatial values are interpolated independently (2D interpolation as opposed to 3D interpolation). The values can be aggregated in time, but but are not interpolated. Returns a DataFrame of gridded interpolated results at each time stamp or an xarray Dataset with the 3 dimensions.
@@ -22,7 +45,7 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
     Parameters
     ----------
     grid : DataFrame or Dataset
-        A pandas DataFrame or an xarray Dataset.
+        A pandas DataFrame or an xarray Dataset. It's recommended to use an xarray Dataset for the input grid as it ensures that the user knows that it is truly regular. Regardless, the input will be regularised.
     time_name : str
         If grid is a DataFrame, then time_name is the time column name. If grid is a Dataset, then time_name is the time coordinate name.
     x_name : str
@@ -39,6 +62,8 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
         The projection for the output data similar to from_crs.
     bbox : tuple of int or float
         The bounding box for the output interpolation in the to_crs projection). None will return a similar grid extent as the input. The tuple should contain four ints or floats in the following order: (x_min, x_max, y_min, y_max)
+    order : int
+        The order of the spline interpolation, default is 3. The order has to be in the range 0-5. An order of 1 is linear interpolation.
     extrapolation : str
         The equivalent of 'mode' in the map_coordinates function. Options are: 'constant', 'nearest', 'reflect', 'mirror', and 'wrap'. Most reseaonable options for this function will be either 'constant' or 'nearest'. See `<https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.map_coordinates.html>`_ for more details.
     cval : int or float
@@ -61,22 +86,7 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
         output_digits = 0
 
     ### Prepare input data
-    if isinstance(grid, xr.Dataset):
-        da1 = grid[data_name]
-        da2 = da1.transpose(time_name, y_name, x_name).sortby([time_name, y_name, x_name])
-        arr1 = da2.values
-        np.nan_to_num(arr1, False)
-        x = da1[x_name].values
-        y = da1[y_name].values
-        time1 = da1[time_name].values
-        xy_orig_pts = np.dstack(np.meshgrid(y, x)).reshape(-1, 2)
-    elif isinstance(grid, pd.DataFrame):
-        grouped = grid.set_index([time_name, y_name, x_name])[data_name].sort_index()
-        shape = tuple(len(i) for i in grouped.index.levels)
-        arr1 = np.zeros(shape, grouped.dtype.type)
-        arr1[tuple(grouped.index.labels)] = grouped.values.flat
-        time1 = grouped.index.levels[0].values
-        xy_orig_pts = np.around(grouped[grouped.index[0][0]].index.to_frame().values, 2)
+    arr1, xy_orig_pts, time1 = process_grid_input(grid, time_name, x_name, y_name, data_name, input_digits)
 
     input_coords, dxy, x_min, y_min = grid_xy_to_map_coords(xy_orig_pts, input_digits)
 
@@ -139,7 +149,7 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
     return new_ds
 
 
-def interp_to_points(df, time_col, x_col, y_col, data_col, point_path, point_site_col, from_crs, to_crs=None, interp_fun='cubic', digits=2):
+def points_to_points(df, time_name, x_name, y_name, data_name, point_path, from_crs, to_crs=None, method='cubic', digits=2, min_val=None):
     """
     Function to take a dataframe of z values and interate through and resample both in time and space. Returns a DataFrame in the shape of the points from the point_shp.
 
@@ -165,8 +175,8 @@ def interp_to_points(df, time_col, x_col, y_col, data_col, point_path, point_sit
         The projection info for the input data if the result should be reprojected to the to_crs projection (either a proj4 str or epsg int).
     to_crs : int or str
         The projection for the output data similar to from_crs.
-    interp_fun : str
-        The scipy griddata interpolation function to be applied (see `https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html`_).
+    method : str
+        The scipy griddata interpolation method to be applied (see `https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html`_).
     digits : int
         The number of digits to round the results.
 
@@ -176,62 +186,46 @@ def interp_to_points(df, time_col, x_col, y_col, data_col, point_path, point_sit
     """
 
     ### Read in points
-    if isinstance(point_path, str) & isinstance(point_site_col, str):
+    if isinstance(point_path, str):
         with fiona.open(point_path) as f1:
             point_crs = Proj(f1.crs, preserve_units=True)
-            points = {p['properties'][point_site_col]: p['geometry']['coordinates'] for p in f1 if p['geometry']['type'] == 'Point'}
+            points = np.array([p['geometry']['coordinates'] for p in f1 if p['geometry']['type'] == 'Point'])
     else:
-        raise ValueError('point_path must be a str path to a geometry file (e.g. shapefile) and point_site_col must be a str.')
+        raise ValueError('point_path must be a str path to a geometry file (e.g. shapefile)')
 
     ### Create the grids
     df2 = df.copy()
 
-    time = pd.to_datetime(df2[time_col].sort_values().unique())
+    time1 = pd.to_datetime(df2[time_name].sort_values().unique())
 
     ### Convert input data to crs of points shp and create input xy
     if to_crs is not None:
         to_crs1 = Proj(convert_crs(to_crs, pass_str=True), preserve_units=True)
-        points = {p: transform(point_crs, to_crs1, points[p][0], points[p][1]) for p in points}
+        points = np.array([transform(point_crs, to_crs1, x, y) for x, y in points])
     else:
         to_crs1 = point_crs
     from_crs1 = Proj(convert_crs(from_crs, pass_str=True), preserve_units=True)
-    xy1 = list(zip(df2[x_col], df2[y_col]))
+    xy1 = list(zip(df2[x_name], df2[y_name]))
     xy_new1 = list(zip(*[transform(from_crs1, to_crs1, x, y) for x, y in xy1]))
-    df2[x_col] = xy_new1[0]
-    df2[y_col] = xy_new1[1]
+    df2[x_name] = xy_new1[0]
+    df2[y_name] = xy_new1[1]
 
     ### Prepare the x and y of the points geodataframe output
-    sites = list(points.keys())
-    xy_int = np.array(list(points.values()))
-
     new_lst = []
-    for t in time:
-        print(t)
-        set1 = df2.loc[df2.time == t]
-        xy = set1[[x_col, y_col]].values
-        new_z = griddata(xy, set1[data_col].values, xy_int, method=interp_fun).round(digits)
-        new_z[new_z <= 0] = 0
+    for name, group in df2.groupby(time_name):
+        print(name)
+        xy = group[[x_name, y_name]].values
+        new_z = griddata(xy, group[data_name].values, points, method=method).round(digits)
+        if isinstance(min_val, (int, float)):
+            new_z[new_z < min_val] = min_val
         new_lst.extend(new_z.tolist())
 
     ### Create new df
-    sites_ar = np.tile(sites, len(time))
-    time_ar = np.repeat(time, len(xy_int))
-    x_ar = np.tile(xy_int.T[0], len(time))
-    y_ar = np.tile(xy_int.T[1], len(time))
-    new_df = pd.DataFrame({'site': sites_ar, 'time': time_ar, 'x': x_ar, 'y': y_ar, data_col: new_lst}).set_index(['time', 'x', 'y'])
+    time_ar = np.repeat(time1, len(points))
+    x_ar = np.tile(points.T[0], len(time1))
+    y_ar = np.tile(points.T[1], len(time1))
+    new_df = pd.DataFrame({'time': time_ar, 'x': x_ar, 'y': y_ar, data_name: new_lst}).set_index(['time', 'x', 'y'])
 
     ### Export results
     return new_df
 
-
-def grid_resample(x, y, z, x_int, y_int, digits=3, method='multiquadric'):
-    """
-    Function to interpolate and resample a set of x, y, z values using the scipy Rbf function.
-    """
-
-    interp1 = Rbf(x, y, z, function=method)
-    z_int = interp1(x_int, y_int).round(digits)
-    z_int[z_int < 0] = 0
-
-    z_int2 = z_int.flatten()
-    return z_int2

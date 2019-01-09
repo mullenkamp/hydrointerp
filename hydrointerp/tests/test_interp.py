@@ -39,7 +39,7 @@ digits = 2
 
 ts_resample_code = '4H'
 
-point_shp = r'N:\met_service\point_test1.shp'
+point_path = r'N:\met_service\point_test1.shp'
 point_site_col = 'site_id'
 site_test = 5
 
@@ -86,6 +86,7 @@ max_lat = -41
 min_lon = 170
 max_lon = 178
 min_val=0
+method='cubic'
 
 grid1 = xr.open_dataset(nc2)
 
@@ -105,7 +106,7 @@ output2d = interp1.isel(time=280)[data_name]
 
 output2d.plot.pcolormesh(x='x', y='y')
 
-grid = grid.to_dataframe().reset_index()
+df = grid.to_dataframe().reset_index()
 
 x = da1[x_name].values
 y = da1[y_name].values
