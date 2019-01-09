@@ -77,7 +77,7 @@ from_crs = 4326
 to_crs = 2193
 grid_res = 1000
 bbox=None
-order=3
+order=1
 extrapolation='constant'
 cval=np.nan
 digits = 2
@@ -86,7 +86,8 @@ max_lat = -41
 min_lon = 170
 max_lon = 178
 min_val=0
-method='cubic'
+method='linear'
+point_data = r'N:\met_service\point_test1.shp'
 
 grid1 = xr.open_dataset(nc2)
 
@@ -156,12 +157,17 @@ X, Y = np.meshgrid(x, y)
 Z = np.exp(-(2*X)**2 - (Y/2)**2)
 
 
+interp2b = grid_to_points(grid, time_name, x_name, y_name, data_name, point_data, from_crs, to_crs, order, extrapolation, fill_val, digits, min_val)
 
+interp2
 
+d2 = df[df.time == pd.Timestamp('2019-01-06T20:29:59.999000')].copy()
 
+interp2c = points_to_grid(d2, time_name, x_name, y_name, data_name, grid_res, from_crs, to_crs, bbox, method, fill_val, digits, min_val)
 
+output2d = interp2c.isel(time=0)[data_name]
 
-
+output2d.plot.pcolormesh(x='x', y='y')
 
 
 
