@@ -2,11 +2,13 @@
 """
 Raster and spatial interpolation functions.
 """
-from time import time
-from multiprocessing import Pool
 import pandas as pd
 import numpy as np
-import fiona
+try:
+    import fiona
+    _fiona = True
+except:
+    _fiona = False
 import xarray as xr
 from scipy.interpolate import griddata, Rbf, RectBivariateSpline
 from pycrsx.utils import convert_crs
@@ -14,6 +16,8 @@ from pyproj import Proj, transform
 from scipy.ndimage import map_coordinates
 from util import grid_xy_to_map_coords, point_xy_to_map_coords, map_coords_to_xy
 
+#################################################
+### Helper functions
 
 def process_grid_input(input_data, time_name, x_name, y_name, data_name, input_digits):
     if isinstance(input_data, pd.DataFrame):
@@ -31,6 +35,8 @@ def process_grid_input(input_data, time_name, x_name, y_name, data_name, input_d
 
     return arr1, xy_orig_pts, time1
 
+################################################
+### Core functions
 
 def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs, to_crs=None, bbox=None, order=3, extrapolation='constant', fill_val=np.nan, digits=2, min_val=None):
     """
@@ -190,9 +196,12 @@ def grid_to_points(grid, time_name, x_name, y_name, data_name, point_data, from_
 
     ### Read in points
     if isinstance(point_data, str):
-        with fiona.open(point_data) as f1:
-            point_crs = Proj(f1.crs, preserve_units=True)
-            points = np.array([tuple(reversed(p['geometry']['coordinates'])) for p in f1 if p['geometry']['type'] == 'Point'])
+        if _fiona:
+            with fiona.open(point_data) as f1:
+                point_crs = Proj(f1.crs, preserve_units=True)
+                points = np.array([tuple(reversed(p['geometry']['coordinates'])) for p in f1 if p['geometry']['type'] == 'Point'])
+        else:
+            raise ImportError('Please install fiona for importing GIS files')
     elif isinstance(point_data, pd.DataFrame):
         point_crs = Proj(from_crs.crs, preserve_units=True)
         points = np.array(zip(point_data[y_name], point_data[x_name]))
@@ -368,9 +377,12 @@ def points_to_points(df, time_name, x_name, y_name, data_name, point_data, from_
     """
     ### Read in points
     if isinstance(point_data, str):
-        with fiona.open(point_data) as f1:
-            point_crs = Proj(f1.crs, preserve_units=True)
-            points = np.array([p['geometry']['coordinates'] for p in f1 if p['geometry']['type'] == 'Point'])
+        if _fiona:
+            with fiona.open(point_data) as f1:
+                point_crs = Proj(f1.crs, preserve_units=True)
+                points = np.array([p['geometry']['coordinates'] for p in f1 if p['geometry']['type'] == 'Point'])
+        else:
+            raise ImportError('Please install fiona for importing GIS files')
     elif isinstance(point_data, pd.DataFrame):
         point_crs = Proj(from_crs.crs, preserve_units=True)
         points = np.array(zip(point_data[x_name], point_data[y_name]))
