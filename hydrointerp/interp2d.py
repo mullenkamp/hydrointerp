@@ -55,7 +55,7 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
     to_crs : int or str or None
         The projection for the output data similar to from_crs.
     bbox : tuple of int or float
-        The bounding box for the output interpolation in the to_crs projection). None will return a similar grid extent as the input. The tuple should contain four ints or floats in the following order: (x_min, x_max, y_min, y_max)
+        The bounding box for the output interpolation in the to_crs projection. None will return a similar grid extent as the input. The tuple should contain four ints or floats in the following order: (x_min, x_max, y_min, y_max)
     order : int
         The order of the spline interpolation, default is 3. The order has to be in the range 0-5. An order of 1 is linear interpolation.
     extrapolation : str
@@ -238,7 +238,40 @@ def grid_to_points(grid, time_name, x_name, y_name, data_name, point_data, from_
 
 def points_to_grid(df, time_name, x_name, y_name, data_name, grid_res, from_crs, to_crs=None, bbox=None, method='cubic', fill_val=np.nan, digits=2, min_val=None):
     """
+    Function to take a dataframe of point value inputs (df) and interpolate to a grid. Uses the `scipy griddata function <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for interpolation.
 
+    Parameters
+    ----------
+    df : DataFrame
+        A pandas DataFrame containing four columns as shown in the below parameters.
+    time_name : str
+        If grid is a DataFrame, then time_name is the time column name. If grid is a Dataset, then time_name is the time coordinate name.
+    x_name : str
+        If grid is a DataFrame, then x_name is the x column name. If grid is a Dataset, then x_name is the x coordinate name.
+    y_name : str
+        If grid is a DataFrame, then y_name is the y column name. If grid is a Dataset, then y_name is the y coordinate name.
+    data_name : str
+        If grid is a DataFrame, then data_name is the data column name. If grid is a Dataset, then data_name is the data variable name.
+    grid_res : int or float
+        The resulting grid resolution in the unit of the final projection (usually meters or decimal degrees).
+    from_crs : int or str or None
+        The projection info for the input data if the result should be reprojected to the to_crs projection (either a proj4 str or epsg int).
+    to_crs : int or str or None
+        The projection for the output data similar to from_crs.
+    bbox : tuple of int or float
+        The bounding box for the output interpolation in the to_crs projection. None will return a similar grid extent as the input. The tuple should contain four ints or floats in the following order: (x_min, x_max, y_min, y_max)
+    method : str
+        The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See `scipy docs <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for more details.
+    fill_val : int or float
+        If 'constant' if passed to the extrapolation parameter, fill_val assigns the value outside of the boundary. Defaults to numpy.nan.
+    digits : int
+        The number of digits to round the output.
+    min_val : int, float, or None
+        The minimum value for the results. All results below min_val will be assigned min_val.
+
+    Returns
+    -------
+    xarray Dataset
     """
     print('Prepare input and output data')
     if (to_crs == 4326) | ((from_crs == 4326) & (to_crs is None)):
