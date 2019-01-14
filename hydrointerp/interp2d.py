@@ -234,8 +234,8 @@ def grid_to_points(grid, time_name, x_name, y_name, data_name, point_data, from_
     arr3 = arr2.flatten().round(digits)
 
     time_ar = np.repeat(time1, len(points))
-    x_ar = np.tile(points.T[0], len(time1))
-    y_ar = np.tile(points.T[1], len(time1))
+    y_ar = np.tile(points.T[0], len(time1))
+    x_ar = np.tile(points.T[1], len(time1))
     new_df = pd.DataFrame({'time': time_ar, 'x': x_ar, 'y': y_ar, data_name: arr3}).set_index(['time', 'x', 'y'])
 
     return new_df
