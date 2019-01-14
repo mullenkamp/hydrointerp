@@ -10,7 +10,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 name = 'hydrointerp'
 main_package = 'hydrointerp'
 datasets = 'datasets'
-version = '1.0.10'
+version = '1.0.12'
 
 # The below code is for readthedocs. To have sphinx/readthedocs interact with
 # the contained package, readthedocs needs to build the package. But the dependencies
@@ -18,7 +18,7 @@ version = '1.0.10'
 if os.environ.get('READTHEDOCS', False) == 'True':
     INSTALL_REQUIRES = []
 else:
-    INSTALL_REQUIRES = ['pandas', 'fiona', 'scipy', 'pycrsx', 'xarray', 'pyproj']
+    INSTALL_REQUIRES = ['pandas', 'scipy', 'pycrsx', 'xarray', 'pyproj']
 
 # Get the long description from the README file
 with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
@@ -151,6 +151,7 @@ setup(
     # projects.
     extras_require={  # Optional
        'fiona': ['fiona'],
+       'rasterio': ['rasterio']
     },
 
     # If there are data files included in your packages that need to be
@@ -159,7 +160,7 @@ setup(
     # If using Python 2.6 or earlier, then these have to be included in
     # MANIFEST.in as well.
     package_data={  # Optional
-        main_package: [datasets + '/*.csv'],
+        main_package: [datasets + '/*.nc'],
     },
 
     # Although 'package_data' is the preferred approach, in some case you may
