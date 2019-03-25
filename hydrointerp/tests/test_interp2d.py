@@ -56,18 +56,21 @@ del ds
 ### Save as tif
 df5 = da4.to_dataframe().reset_index()
 
-save_geotiff(df5, from_crs, 'precipitationCal', 'lon', 'lat', export_path=tif0)
+#save_geotiff(df5, from_crs, 'precipitationCal', 'lon', 'lat', export_path=tif0)
 
 ########################################
 ### Run interpolations
 
-interp1 = grid_to_grid(da4.to_dataset(), time_name, x_name, y_name, data_name, grid_res, from_crs, to_crs, bbox, order, extrapolation, min_val=min_val)
+def test_grid_to_grid():
+    interp1 = grid_to_grid(da4.to_dataset(), time_name, x_name, y_name, data_name, grid_res, from_crs, to_crs, bbox, order, extrapolation, min_val=min_val)
 
-save_geotiff(interp1.to_dataframe().reset_index(), to_crs, 'precipitationCal', 'x', 'y', export_path=tif1)
+    save_geotiff(interp1.to_dataframe().reset_index(), to_crs, 'precipitationCal', 'x', 'y', export_path=tif1)
+
+
 
 interp2 = points_to_grid(df5, time_name, x_name, y_name, data_name, grid_res, from_crs, to_crs, bbox, method, extrapolation, min_val=min_val)
 
-save_geotiff(interp2.to_dataframe().reset_index(), to_crs, 'precipitationCal', 'x', 'y', export_path=tif2)
+#save_geotiff(interp2.to_dataframe().reset_index(), to_crs, 'precipitationCal', 'x', 'y', export_path=tif2)
 
 interp3 = grid_to_points(da4.to_dataset(), time_name, x_name, y_name, data_name, points_df, from_crs, to_crs, order, min_val=min_val)
 
