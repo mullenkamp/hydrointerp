@@ -7,7 +7,7 @@ Created on Mon Sep 10 15:04:56 2018
 import os
 import pandas as pd
 import numpy as np
-from pycrsx.utils import convert_crs
+from hydrointerp.util import convert_crs
 
 try:
     import rasterio
