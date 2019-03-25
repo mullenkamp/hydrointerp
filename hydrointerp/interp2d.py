@@ -11,10 +11,10 @@ except:
     _fiona = False
 import xarray as xr
 from scipy.interpolate import griddata, RectBivariateSpline
-from pycrsx.utils import convert_crs
 from pyproj import Proj, transform
 from scipy.ndimage import map_coordinates
-from hydrointerp.util import grid_xy_to_map_coords, point_xy_to_map_coords
+from hydrointerp.util import grid_xy_to_map_coords, point_xy_to_map_coords, convert_crs
+#from util import grid_xy_to_map_coords, point_xy_to_map_coords, convert_crs
 
 #################################################
 ### Helper functions
@@ -97,8 +97,8 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
 
     ### convert to new projection and prepare X/Y data
     if isinstance(from_crs, (str, int)) & isinstance(to_crs, (str, int)):
-        from_crs1 = Proj(convert_crs(from_crs, pass_str=True), preserve_units=True)
-        to_crs1 = Proj(convert_crs(to_crs, pass_str=True), preserve_units=True)
+        from_crs1 = Proj(convert_crs(from_crs, pass_str=True))
+        to_crs1 = Proj(convert_crs(to_crs, pass_str=True))
         xy_new = np.array(list(zip(*[reversed(transform(from_crs1, to_crs1, x, y)) for y, x in xy_orig_pts]))).round(output_digits)
         out_y_min, out_x_min = xy_new.min(1)
         out_y_max, out_x_max = xy_new.max(1)
