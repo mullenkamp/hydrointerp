@@ -17,7 +17,7 @@ or::
 
   conda install -c mullenkamp hydrointerp
 
-The core dependency is `Pandas <http://pandas.pydata.org/pandas-docs/stable/>`_ and `Scipy <https://docs.scipy.org/doc/scipy/reference/index.html>`_.
+The core dependency are `Pandas <http://pandas.pydata.org/pandas-docs/stable/>`_,  `Scipy <https://docs.scipy.org/doc/scipy/reference/index.html>`_, `xarray <http://xarray.pydata.org/en/stable/>`_, and `pyproj <http://pyproj4.github.io/pyproj/html/index.html>`_.
 
 Project Plan
 ------------
