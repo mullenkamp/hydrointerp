@@ -41,7 +41,7 @@ requirements:
     - xarray
     - pyproj
     - netcdf4
-    - pycrs
+    - pycrs>=1
 
 test:
   imports:

@@ -11,10 +11,10 @@ except:
     _fiona = False
 import xarray as xr
 from scipy.interpolate import griddata, RectBivariateSpline
-from pyproj import Proj, transform
+from pyproj import Proj, transform, CRS, Transformer
 from scipy.ndimage import map_coordinates
-from hydrointerp.util import grid_xy_to_map_coords, point_xy_to_map_coords, convert_crs
-#from util import grid_xy_to_map_coords, point_xy_to_map_coords, convert_crs
+from hydrointerp.util import grid_xy_to_map_coords, point_xy_to_map_coords
+#from util import grid_xy_to_map_coords, point_xy_to_map_coords
 
 #################################################
 ### Helper functions
@@ -97,9 +97,10 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
 
     ### convert to new projection and prepare X/Y data
     if isinstance(from_crs, (str, int)) & isinstance(to_crs, (str, int)):
-        from_crs1 = Proj(convert_crs(from_crs, pass_str=True))
-        to_crs1 = Proj(convert_crs(to_crs, pass_str=True))
-        xy_new = np.array(list(zip(*[reversed(transform(from_crs1, to_crs1, x, y)) for y, x in xy_orig_pts]))).round(output_digits)
+        from_crs1 = Proj(CRS.from_user_input(from_crs))
+        to_crs1 = Proj(CRS.from_user_input(to_crs))
+        trans1 = Transformer.from_proj(from_crs1, to_crs1)
+        xy_new = np.array(trans1.transform(*xy_orig_pts.T)).round(output_digits)
         out_y_min, out_x_min = xy_new.min(1)
         out_y_max, out_x_max = xy_new.max(1)
     else:
@@ -117,7 +118,8 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
     xy_out = np.dstack(np.meshgrid(new_y, new_x)).reshape(-1, 2)
 
     if isinstance(to_crs, (str, int)):
-        xy_new_index = np.array(list(zip(*[reversed(transform(to_crs1, from_crs1, x, y)) for y, x in xy_out]))).T
+        trans2 = Transformer.from_proj(to_crs1, from_crs1)
+        xy_new_index = np.array(trans2.transform(*xy_out.T)).T
     else:
         xy_new_index = xy_out
 
@@ -194,12 +196,12 @@ def grid_to_points(grid, time_name, x_name, y_name, data_name, point_data, from_
     if isinstance(point_data, str):
         if _fiona:
             with fiona.open(point_data) as f1:
-                point_crs = Proj(f1.crs, preserve_units=True)
+                point_crs = Proj(f1.crs)
                 points = np.array([tuple(reversed(p['geometry']['coordinates'])) for p in f1 if p['geometry']['type'] == 'Point'])
         else:
             raise ImportError('Please install fiona for importing GIS files')
     elif isinstance(point_data, pd.DataFrame):
-        point_crs = Proj(convert_crs(to_crs, pass_str=True), preserve_units=True)
+        point_crs = CRS.from_user_input(to_crs)
         points = point_data[['y', 'x']].values
     else:
         raise ValueError('point_path must be a str path to a geometry file (e.g. shapefile) or a DataFrame with the same x_name and y_name columns')
@@ -210,13 +212,15 @@ def grid_to_points(grid, time_name, x_name, y_name, data_name, point_data, from_
     input_coords, dxy, x_min, y_min = grid_xy_to_map_coords(xy_orig_pts, input_digits)
 
     ### Convert points to to_crs, from_crs, and array index
-    from_crs1 = Proj(convert_crs(from_crs, pass_str=True), preserve_units=True)
+    from_crs1 = CRS.from_user_input(from_crs)
     if to_crs is not None:
-        to_crs1 = Proj(convert_crs(to_crs, pass_str=True), preserve_units=True)
-        points = np.array([tuple(reversed(transform(point_crs, to_crs1, x, y))) for y, x in points])
+        to_crs1 = CRS.from_user_input(to_crs)
+        trans1 = Transformer.from_crs(point_crs, to_crs1)
+        points = np.array(trans1.transform(*points.T)).T
     else:
         to_crs1 = point_crs
-    points_from_crs = np.array([tuple(reversed(transform(point_crs, from_crs1, x, y))) for y, x in points])
+    trans2 = Transformer.from_crs(to_crs1, from_crs1)
+    points_from_crs = np.array(trans2.transform(*points.T)).T
     points_coords = point_xy_to_map_coords(points_from_crs, dxy, x_min, y_min, float)
 
     ### Run interpolations
@@ -290,20 +294,21 @@ def points_to_grid(df, time_name, x_name, y_name, data_name, grid_res, from_crs,
     time1 = pd.to_datetime(df2[time_name].sort_values().unique())
 
     ### Convert input data to crs of points shp and create input xy
-    from_crs1 = Proj(convert_crs(from_crs, pass_str=True), preserve_units=True)
-    xy1 = np.array(list(zip(df2[x_name], df2[y_name])))
+    from_crs1 = Proj(CRS.from_user_input(from_crs))
+    xy1 = np.array(list(zip(df2[y_name], df2[x_name])))
     if isinstance(to_crs, (str, int)):
-        to_crs1 = Proj(convert_crs(to_crs, pass_str=True), preserve_units=True)
-        xy1 = np.array(list(zip(*[transform(from_crs1, to_crs1, x, y) for x, y in xy1])))
-    df2[x_name] = xy1[0]
-    df2[y_name] = xy1[1]
+        to_crs1 = Proj(CRS.from_user_input(to_crs))
+        trans1 = Transformer.from_proj(from_crs1, to_crs1)
+        xy1 = np.array(trans1.transform(*xy1.T))
+    df2[x_name] = xy1[1]
+    df2[y_name] = xy1[0]
 
     ### Prepare output data
     if isinstance(bbox, tuple):
         out_x_min, out_x_max, out_y_min, out_y_max = bbox
     else:
-        out_x_min, out_y_min = xy1.min(1).round(output_digits)
-        out_x_max, out_y_max = xy1.max(1).round(output_digits)
+        out_y_min, out_x_min = xy1.min(1).round(output_digits)
+        out_y_max, out_x_max = xy1.max(1).round(output_digits)
 
     new_x = np.arange(out_x_min, out_x_max, grid_res)
     new_y = np.arange(out_y_min, out_y_max, grid_res)
@@ -381,13 +386,13 @@ def points_to_points(df, time_name, x_name, y_name, data_name, point_data, from_
     if isinstance(point_data, str):
         if _fiona:
             with fiona.open(point_data) as f1:
-                point_crs = Proj(f1.crs, preserve_units=True)
+                point_crs = Proj(f1.crs)
                 points = np.array([p['geometry']['coordinates'] for p in f1 if p['geometry']['type'] == 'Point'])
         else:
             raise ImportError('Please install fiona for importing GIS files')
     elif isinstance(point_data, pd.DataFrame):
-        point_crs = Proj(convert_crs(to_crs, pass_str=True), preserve_units=True)
-        points = point_data[['x', 'y']].values
+        point_crs = Proj(CRS.from_user_input(to_crs))
+        points = point_data[['y', 'x']].values
     else:
         raise ValueError('point_path must be a str path to a geometry file (e.g. shapefile) or a DataFrame with the same x_name and y_name columns')
 
@@ -397,30 +402,33 @@ def points_to_points(df, time_name, x_name, y_name, data_name, point_data, from_
 
     ### Convert input data to crs of points shp and create input xy
     if to_crs is not None:
-        to_crs1 = Proj(convert_crs(to_crs, pass_str=True), preserve_units=True)
-        points = np.array([transform(point_crs, to_crs1, x, y) for x, y in points])
+        to_crs1 = Proj(CRS.from_user_input(to_crs))
+        trans1 = Transformer.from_proj(point_crs, to_crs1)
+        points = np.array(trans1.transform(*points.T))
     else:
         to_crs1 = point_crs
-    from_crs1 = Proj(convert_crs(from_crs, pass_str=True), preserve_units=True)
-    xy1 = list(zip(df2[x_name], df2[y_name]))
-    xy_new1 = list(zip(*[transform(from_crs1, to_crs1, x, y) for x, y in xy1]))
-    df2[x_name] = xy_new1[0]
-    df2[y_name] = xy_new1[1]
+    from_crs1 = Proj(CRS.from_user_input(from_crs))
+    xy1 = df2[[y_name, x_name]].values
+    trans2 = Transformer.from_proj(from_crs1, to_crs1)
+    xy_new1 = np.array(trans2.transform(*xy1.T))
+    df2[x_name] = xy_new1[1]
+    df2[y_name] = xy_new1[0]
 
     ### Run interpolations
+    points1 = np.array((points[1], points[0])).T
     new_lst = []
     for name, group in df2.groupby(time_name):
         print(name)
         xy = group[[x_name, y_name]].values
-        new_z = griddata(xy, group[data_name].values, points, method=method, fill_value=np.nan).round(digits)
+        new_z = griddata(xy, group[data_name].values, points1, method=method, fill_value=np.nan).round(digits)
         if isinstance(min_val, (int, float)):
             new_z[new_z < min_val] = min_val
         new_lst.extend(new_z.tolist())
 
     ### Create new df
-    time_ar = np.repeat(time1, len(points))
-    x_ar = np.tile(points.T[0], len(time1))
-    y_ar = np.tile(points.T[1], len(time1))
+    time_ar = np.repeat(time1, len(points1))
+    x_ar = np.tile(points1.T[0], len(time1))
+    y_ar = np.tile(points1.T[1], len(time1))
     new_df = pd.DataFrame({'time': time_ar, 'x': x_ar, 'y': y_ar, data_name: new_lst}).set_index(['time', 'x', 'y'])
 
     ### Export results
