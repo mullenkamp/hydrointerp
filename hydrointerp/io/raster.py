@@ -7,7 +7,7 @@ Created on Mon Sep 10 15:04:56 2018
 import os
 import pandas as pd
 import numpy as np
-from hydrointerp.util import convert_crs
+from pyproj import CRS
 
 try:
     import rasterio
@@ -64,12 +64,12 @@ def save_geotiff(df, crs, data_col, x_col='x', y_col='y', time_col=None, nfiles=
     ### Make the rasters
     if time_col is None:
         z = df.set_index([y_col, x_col])[data_col].unstack().values[::-1]
-        new_dataset = rasterio.open(export_path, 'w', driver='GTiff', height=len(xy1[y_col].unique()), width=len(xy1[x_col].unique()), count=1, dtype=df[data_col].dtype.name, crs=convert_crs(crs, pass_str=True), transform=trans2)
+        new_dataset = rasterio.open(export_path, 'w', driver='GTiff', height=len(xy1[y_col].unique()), width=len(xy1[x_col].unique()), count=1, dtype=df[data_col].dtype.name, crs=CRS.from_user_input(crs).to_proj4(), transform=trans2)
         new_dataset.write(z, 1)
         new_dataset.close()
     else:
         if nfiles == 'one':
-            new_dataset = rasterio.open(export_path, 'w', driver='GTiff', height=len(xy1[y_col].unique()), width=len(xy1[x_col].unique()), count=len(time), dtype=df[data_col].dtype.name, crs=convert_crs(crs), transform=trans2)
+            new_dataset = rasterio.open(export_path, 'w', driver='GTiff', height=len(xy1[y_col].unique()), width=len(xy1[x_col].unique()), count=len(time), dtype=df[data_col].dtype.name, crs=CRS.from_user_input(crs).to_proj4(), transform=trans2)
             for i in range(1, len(time)+1):
                 z = df.loc[df[time_col] == time[i - 1]].set_index([y_col, x_col])[data_col].unstack().values[::-1]
                 new_dataset.write(z, i)
@@ -80,6 +80,6 @@ def save_geotiff(df, crs, data_col, x_col='x', y_col='y', time_col=None, nfiles=
                 str_date = pd.to_datetime(i).strftime('%Y-%m-%d_%H')
                 file2 = file1 + '_' + str_date + '.tif'
                 z = df.loc[df[time_col] == i].set_index([y_col, x_col])[data_col].unstack().values[::-1]
-                new_dataset = rasterio.open(file2, 'w', driver='GTiff', height=len(xy1[y_col].unique()), width=len(xy1[x_col].unique()), count=1, dtype=df[data_col].dtype.name, crs=convert_crs(crs), transform=trans2)
+                new_dataset = rasterio.open(file2, 'w', driver='GTiff', height=len(xy1[y_col].unique()), width=len(xy1[x_col].unique()), count=1, dtype=df[data_col].dtype.name, crs=CRS.from_user_input(crs).to_proj4(), transform=trans2)
                 new_dataset.write(z, 1)
                 new_dataset.close()

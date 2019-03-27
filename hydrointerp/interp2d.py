@@ -11,7 +11,7 @@ except:
     _fiona = False
 import xarray as xr
 from scipy.interpolate import griddata, RectBivariateSpline
-from pyproj import Proj, transform, CRS, Transformer
+from pyproj import Proj, CRS, Transformer
 from scipy.ndimage import map_coordinates
 from hydrointerp.util import grid_xy_to_map_coords, point_xy_to_map_coords
 #from util import grid_xy_to_map_coords, point_xy_to_map_coords

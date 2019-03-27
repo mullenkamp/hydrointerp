@@ -1,0 +1,17 @@
+name: test
+channels:
+  - defaults
+dependencies:
+  - python=3.5
+  # required
+  - pandas
+  - scipy
+  - xarray
+  - pyproj>=2
+  - netcdf4
+  - rasterio
+  # testing
+  - pytest
+  - pytest-cov
+  - pip:
+    - codecov
