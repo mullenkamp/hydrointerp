@@ -1,6 +1,6 @@
 {% set name = "hydrointerp" %}
-{% set version = "1.0.21" %}
-{% set sha256 = "f7d6b89a52399c07a312201570b65ec19d1eb123a18fc6fb5a075c85225457c3" %}
+{% set version = "1.0.22" %}
+{% set sha256 = "7c18e8641793056b4e4538ef47de3ec92d44c6109311cf41b5564a7d0d8dea98" %}
 
 # sha256 is the prefered checksum -- you can get it for a file with:
 #  `openssl sha256 <file name>`.
@@ -39,7 +39,7 @@ requirements:
     - pandas
     - scipy
     - xarray
-    - pyproj>=2
+    - pyproj>=2.1
     - netcdf4
 
 test:

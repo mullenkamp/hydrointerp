@@ -1,5 +1,6 @@
 name: test
 channels:
+  - conda-forge
   - defaults
 dependencies:
   - python=3.6
@@ -7,9 +8,8 @@ dependencies:
   - pandas
   - scipy
   - xarray
-  - pyproj>=2
+  - pyproj>=2.1
   - netcdf4
-  - rasterio
   # testing
   - pytest
   - pytest-cov
