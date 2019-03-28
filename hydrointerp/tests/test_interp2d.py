@@ -4,21 +4,21 @@ Created on Thu Jan 10 13:08:28 2019
 
 @author: MichaelEK
 """
+import os
 import numpy as np
 import pandas as pd
 import xarray as xr
 from hydrointerp.interp2d import points_to_grid, points_to_points, grid_to_grid, grid_to_points
-from hydrointerp.io.raster import save_geotiff
+#from hydrointerp.io.raster import save_geotiff
 
 #########################################
 ### Parameters
 
-nc1 = 'nasa_gpm_2018-01-17.nc'
-tif0 = 'nasa_gpm_2018-01-17.tif'
-tif1 = 'nasa_gpm_2018-01-17_test1.tif'
-tif2 = 'nasa_gpm_2018-01-17_test2.tif'
-tif3 = 'nasa_gpm_2018-01-17_test3.tif'
-tif4 = 'nasa_gpm_2018-01-17_test4.tif'
+py_dir = os.path.realpath(os.path.dirname(__file__))
+
+nc1 = 'nasa_gpm_2017-07-20.nc'
+#tif0 = 'nasa_gpm_2017-07-20.tif'
+
 
 time_name = 'time'
 x_name = 'lon'
@@ -45,7 +45,7 @@ points_df = pd.DataFrame(points, columns=['x', 'y'])
 ########################################
 ### Read data
 
-ds = xr.open_dataset(nc1)
+ds = xr.open_dataset(os.path.join(py_dir, nc1))
 
 ### Aggregate data to day
 da4 = ds[data_name].resample(time='D', closed='right', label='left').sum('time')
@@ -56,27 +56,32 @@ del ds
 ### Save as tif
 df5 = da4.to_dataframe().reset_index()
 
-def test_save_geotiff():
-    save_geotiff(df5, from_crs, 'precipitationCal', 'lon', 'lat', export_path=tif0)
-
-    assert 0 == 0
+#def test_save_geotiff():
+#    save_geotiff(df5, from_crs, 'precipitationCal', 'lon', 'lat', export_path=tif0)
+#
+#    assert 0 == 0
 
 ########################################
 ### Run interpolations
 
 def test_grid_to_grid():
     interp1 = grid_to_grid(da4.to_dataset(), time_name, x_name, y_name, data_name, grid_res, from_crs, to_crs, bbox, order, extrapolation, min_val=min_val)
+    assert 33000000 > interp1.precipitationCal.sum() > 32900000
 
-    save_geotiff(interp1.to_dataframe().reset_index(), to_crs, 'precipitationCal', 'x', 'y', export_path=tif1)
+
+def test_points_to_grid():
+    interp2 = points_to_grid(df5, time_name, x_name, y_name, data_name, grid_res, from_crs, to_crs, bbox, method, extrapolation, min_val=min_val)
+    assert 33000000 > interp2.precipitationCal.sum() > 32900000
 
 
-interp2 = points_to_grid(df5, time_name, x_name, y_name, data_name, grid_res, from_crs, to_crs, bbox, method, extrapolation, min_val=min_val)
+def test_grid_to_points():
+    interp3 = grid_to_points(da4.to_dataset(), time_name, x_name, y_name, data_name, points_df, from_crs, to_crs, order, min_val=min_val)
+    assert 24 > interp3.precipitationCal.sum() > 22
 
-#save_geotiff(interp2.to_dataframe().reset_index(), to_crs, 'precipitationCal', 'x', 'y', export_path=tif2)
 
-interp3 = grid_to_points(da4.to_dataset(), time_name, x_name, y_name, data_name, points_df, from_crs, to_crs, order, min_val=min_val)
-
-interp4 = points_to_points(df5, time_name, x_name, y_name, data_name, points_df, from_crs, to_crs, method, min_val=min_val)
+def test_points_to_points():
+    interp4 = points_to_points(df5, time_name, x_name, y_name, data_name, points_df, from_crs, to_crs, method, min_val=min_val)
+    assert 24 > interp4.precipitationCal.sum() > 22
 
 
 
