@@ -10,7 +10,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 name = 'hydrointerp'
 main_package = 'hydrointerp'
 datasets = 'datasets'
-version = '1.0.21'
+version = '1.0.22'
 
 # The below code is for readthedocs. To have sphinx/readthedocs interact with
 # the contained package, readthedocs needs to build the package. But the dependencies
@@ -18,7 +18,7 @@ version = '1.0.21'
 if os.environ.get('READTHEDOCS', False) == 'True':
     INSTALL_REQUIRES = []
 else:
-    INSTALL_REQUIRES = ['pandas', 'scipy', 'xarray', 'pyproj', 'netcdf4']
+    INSTALL_REQUIRES = ['pandas', 'scipy', 'xarray', 'pyproj>=2.1', 'netcdf4']
 
 # Get the long description from the README file
 with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
@@ -62,7 +62,7 @@ setup(
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#summary
-    description='Function for interpolating hydrologic features',  # Required
+    description='Functions for interpolating hydrologic features',  # Required
 
     # This is an optional longer description of your project that represents
     # the body of text which users will see when they visit PyPI.
