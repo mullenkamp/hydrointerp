@@ -2,6 +2,8 @@
 """
 Utility functions.
 """
+import numpy as np
+import pandas as pd
 #from pycrs import parse
 #
 ##########################################
@@ -23,8 +25,97 @@ Utility functions.
 #
 #########################################
 #### Functions
-#
-#
+
+
+def grid_xy_to_map_coords(xy, digits=2, dtype=int, copy=True):
+    """
+    Convert an array of gridded x and y values to map_coordinates appropriate values.
+
+    Parameters
+    ----------
+    xy : ndarray
+        of shape (l, 2) where l is the number of location pairs. The first value of each pair is x and the second is y.
+    digits : int
+        The resolution of the data in digits.
+    copy : bool
+        Should it make a copy or modify the array in place?
+
+    Returns
+    -------
+    ndarray
+        Transposed shape from the input xy to an index array.
+    dxy
+        The grid interval.
+    x_min
+        The x value at index 0.
+    y_min
+        The y value at index 0.
+    """
+    if copy:
+        xy1 = (xy.T * 10**digits).copy()
+    else:
+       xy1 = (xy.T * 10**digits)
+    y_min, x_min = xy1.min(1)
+    dxy = int(np.median(np.diff(xy1[0])))
+    xy1[0] = ((xy1[0] - y_min)/dxy)
+    xy1[1] = ((xy1[1] - x_min)/dxy)
+
+    if dtype == int:
+        xy1 = np.rint(xy1).astype(int)
+
+    return (xy1, dxy/10**digits, x_min/10**digits, y_min/10**digits)
+
+
+def point_xy_to_map_coords(xy, dxy, x_min, y_min, dtype=int, copy=True):
+    """
+    Convert an array of irregular x and y values to map_coordinates appropriate values.
+
+    Parameters
+    ----------
+    xy : ndarray
+        of shape (l, 2) where l is the number of location pairs. The first value of each pair is x and the second is y.
+    dxy
+        The grid interval.
+    x_min
+        The x value at index 0.
+    y_min
+        The y value at index 0.
+    copy : bool
+        Should it make a copy or modify the array in place?
+
+    Returns
+    -------
+    ndarray
+        Transposed shape from the input xy to an index array.
+    """
+    if copy:
+        xy1 = xy.T.copy()
+    else:
+        xy1 = xy.T
+    xy1[0] = ((xy1[0] - y_min)/dxy)
+    xy1[1] = ((xy1[1] - x_min)/dxy)
+
+    if dtype == int:
+        xy1 = np.rint(xy1).astype(int)
+
+    return xy1
+
+
+def map_coords_to_xy(coords, dxy, x_min, y_min, copy=True):
+    """
+    The reverse of point_xy_to_map_coords.
+    """
+    if copy:
+        coords1 = coords.copy().astype(float)
+    else:
+        coords1 = coords.astype(float)
+    coords1[0] = coords1[0]*dxy + x_min
+    coords1[1] = coords1[1]*dxy + y_min
+
+    return coords1.T
+
+
+
 #def convert_crs(from_crs, crs_type='proj4', pass_str=False):
 #    """
 #    Convenience function to convert one crs format to another.
