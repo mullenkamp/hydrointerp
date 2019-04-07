@@ -172,7 +172,7 @@ class Interp(object):
         -------
         xarray Dataset
         """
-        out1 = interp2d.grid_to_grid(self.data, self.time_name, self.x_name, self.y_name, self.data_name, point_data, self.from_crs, to_crs, method, digits, min_val)
+        out1 = interp2d.points_to_points(self.data, self.time_name, self.x_name, self.y_name, self.data_name, point_data, self.from_crs, to_crs, method, digits, min_val)
         return out1
 
 
