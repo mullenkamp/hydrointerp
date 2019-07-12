@@ -91,7 +91,7 @@ def test_grid_to_grid2():
 
 
 def test_points_to_grid2():
-    interpc2 = Interp(df5, time_name, x_name, y_name, data_name, from_crs)
+    interpc2 = Interp(point_data=df5, point_time_name=time_name, point_x_name=x_name, point_y_name=y_name, point_data_name=data_name, point_crs=from_crs)
     interp2 = interpc2.points_to_grid(grid_res, to_crs, bbox, method, extrapolation, min_val=min_val)
     assert 33000000 > interp2.precip.sum() > 32800000
 
@@ -103,7 +103,7 @@ def test_grid_to_points2():
 
 
 def test_points_to_points2():
-    interpc2 = Interp(df5, time_name, x_name, y_name, data_name, from_crs)
+    interpc2 = Interp(point_data=df5, point_time_name=time_name, point_x_name=x_name, point_y_name=y_name, point_data_name=data_name, point_crs=from_crs)
     interp4 = interpc2.points_to_points(points_df, to_crs, method, min_val=min_val)
     assert 24 > interp4.precip.sum() > 22
 
