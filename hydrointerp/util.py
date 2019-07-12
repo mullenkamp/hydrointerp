@@ -3,7 +3,6 @@
 Utility functions.
 """
 import numpy as np
-import pandas as pd
 #from pycrs import parse
 #
 ##########################################
@@ -114,6 +113,11 @@ def map_coords_to_xy(coords, dxy, x_min, y_min, copy=True):
 
     return coords1.T
 
+
+def find_nearest(array, value):
+    array = np.asarray(array)
+    idx = (np.abs(array - value)).argmin()
+    return array[idx]
 
 
 #def convert_crs(from_crs, crs_type='proj4', pass_str=False):
