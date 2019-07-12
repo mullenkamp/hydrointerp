@@ -271,6 +271,8 @@ def points_to_grid(df, time_name, x_name, y_name, data_name, grid_res, from_crs,
         The bounding box for the output interpolation in the to_crs projection. None will return a similar grid extent as the input. The tuple should contain four ints or floats in the following order: (x_min, x_max, y_min, y_max)
     method : str
         The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See `scipy docs <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for more details.
+    extrapolation : str
+        Either 'constant' or 'nearest'.
     fill_val : int or float
         If 'constant' if passed to the extrapolation parameter, fill_val assigns the value outside of the boundary. Defaults to numpy.nan.
     digits : int
@@ -295,13 +297,13 @@ def points_to_grid(df, time_name, x_name, y_name, data_name, grid_res, from_crs,
 
     ### Convert input data to crs of points shp and create input xy
     from_crs1 = Proj(CRS.from_user_input(from_crs))
-    xy1 = np.array(list(zip(df2[y_name], df2[x_name])))
+    xy1 = np.array(list(zip(df2[y_name], df2[x_name]))).T
     if isinstance(to_crs, (str, int)):
         to_crs1 = Proj(CRS.from_user_input(to_crs))
         trans1 = Transformer.from_proj(from_crs1, to_crs1)
-        xy1 = np.array(trans1.transform(*xy1.T))
-    df2[x_name] = xy1[1]
-    df2[y_name] = xy1[0]
+        xy1 = np.array(trans1.transform(*xy1))
+        df2[x_name] = xy1[1]
+        df2[y_name] = xy1[0]
 
     ### Prepare output data
     if isinstance(bbox, tuple):
