@@ -87,25 +87,25 @@ def test_points_to_points1():
 def test_grid_to_grid2():
     interpc1 = Interp(da4.to_dataset(), time_name, x_name, y_name, data_name, from_crs)
     interp1 = interpc1.grid_to_grid(grid_res, to_crs, bbox, order, extrapolation, min_val=min_val)
-    assert 33000000 > interp1.precipitationCal.sum() > 32800000
+    assert 33000000 > interp1.precip.sum() > 32800000
 
 
 def test_points_to_grid2():
     interpc2 = Interp(df5, time_name, x_name, y_name, data_name, from_crs)
     interp2 = interpc2.points_to_grid(grid_res, to_crs, bbox, method, extrapolation, min_val=min_val)
-    assert 33000000 > interp2.precipitationCal.sum() > 32800000
+    assert 33000000 > interp2.precip.sum() > 32800000
 
 
 def test_grid_to_points2():
     interpc1 = Interp(da4.to_dataset(), time_name, x_name, y_name, data_name, from_crs)
     interp3 = interpc1.grid_to_points(points_df, to_crs, order, min_val=min_val)
-    assert 24 > interp3.precipitationCal.sum() > 22
+    assert 24 > interp3.precip.sum() > 22
 
 
 def test_points_to_points2():
     interpc2 = Interp(df5, time_name, x_name, y_name, data_name, from_crs)
     interp4 = interpc2.points_to_points(points_df, to_crs, method, min_val=min_val)
-    assert 24 > interp4.precipitationCal.sum() > 22
+    assert 24 > interp4.precip.sum() > 22
 
 
 
