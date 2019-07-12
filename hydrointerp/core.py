@@ -8,9 +8,10 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 from pyproj import Proj, CRS, Transformer
-#from hydrointerp import interp2d
-import interp2d
-import util
+from hydrointerp import interp2d
+# import interp2d
+from hydrointerp import util
+# import util
 
 ###################################
 ### base class
@@ -263,30 +264,3 @@ class Interp(object):
 
         ## Return
         return grid3.to_dataset()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
