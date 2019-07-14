@@ -12,6 +12,7 @@ from hydrointerp import interp2d
 # import interp2d
 from hydrointerp import util
 # import util
+import random
 
 ###################################
 ### base class
@@ -68,8 +69,9 @@ class Interp(object):
                 raise TypeError('grid_data must be a Dataset')
         if (point_data is not None) and (grid_data is not None):
             self.adjust_grid_from_points = self._adjust_grid_from_points
+            self.validate_grid_from_points = self._validate_grid_from_points
         if (point_data is None) and (grid_data is None):
-            raise ValueError('point_data must be a DataFrame or grid_data must be a Dataset')
+            raise ValueError('point_data must be a DataFrame and/or grid_data must be a Dataset')
         pass
 
 
@@ -209,9 +211,28 @@ class Interp(object):
             return new_grid
 
 
-    def _adjust_grid_from_points(self, grid_res=None, to_crs=None, order=3, method='linear', digits=2, min_val=0):
+    def _adjust_grid_from_points(self, grid_res=None, to_crs=None, order=2, method='linear', digits=2, min_val=0):
         """
+        Method to adjust a grid by forcing it through point data.
 
+        Parameters
+        ----------
+        grid_res : int, float, or None
+            The resulting grid resolution in the unit of the final projection (usually meters or decimal degrees).
+        to_crs : int or str or None
+            The projection for the output data similar to from_crs.
+        order : int
+            The order of the spline interpolation, default is 3. The order has to be in the range 0-5. An order of 1 is linear interpolation.
+        method : str
+            The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See `scipy docs <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for more details.
+        digits : int
+            The number of digits to round the output.
+        min_val : int, float, or None
+            The minimum value for the results. All results below min_val will be assigned min_val.
+
+        Returns
+        -------
+        Dataset
         """
         ## Resample the grid if needed
         if isinstance(grid_res, (int, float)):
@@ -240,8 +261,8 @@ class Interp(object):
 
         both1 = pd.merge(point_data, pts2.rename(columns={'precip': 'grid_precip'}), on=['x', 'y', 'time'])
 
-        both1['diff'] = both1['precip'] - both1['grid_precip']
-        self.diff_precip = both1
+        both1['ratio'] = both1['precip']/both1['grid_precip']
+        self.ratio_precip = both1
 
         ## Create the bounding box for the new grid
         min_p = sites1.min(0)
@@ -253,14 +274,70 @@ class Interp(object):
         max_lat = util.find_nearest(grid1.y, max_p[1])
 
         ## Points to grid
-        diff_grid = interp2d.points_to_grid(both1[['time', 'x', 'y', 'diff']], 'time', 'x', 'y', 'diff', grid_res, to_crs, None, (min_lon, max_lon, min_lat, max_lat), method, 'nearest')
+        ratio_grid = interp2d.points_to_grid(both1[['time', 'x', 'y', 'ratio']], 'time', 'x', 'y', 'ratio', grid_res, to_crs, None, (min_lon, max_lon, min_lat, max_lat), method, 'nearest')
 
         ## Add original grid by diff grid
-        grid2 = xr.merge([grid1, diff_grid], join='inner')
-        grid3 = grid2['precip'] + grid2['diff']
+        grid2 = xr.merge([grid1, ratio_grid], join='inner')
+        grid3 = grid2['precip'] * grid2['ratio']
         grid3.name = 'precip'
         if isinstance(min_val, (int, float)):
             grid3 = xr.where(grid3 < min_val, 0, grid3).copy()
 
         ## Return
         return grid3.to_dataset()
+
+
+    def _validate_grid_from_points(self, test_perc=0.1, grid_res=None, to_crs=None, order=2, method='linear', digits=2, min_val=0):
+        """
+        Method to validate a grid created by the adjust_grid_from_points method.
+
+        Parameters
+        ----------
+        grid_res : int, float, or None
+            The resulting grid resolution in the unit of the final projection (usually meters or decimal degrees).
+        to_crs : int or str or None
+            The projection for the output data similar to from_crs.
+        order : int
+            The order of the spline interpolation, default is 3. The order has to be in the range 0-5. An order of 1 is linear interpolation.
+        method : str
+            The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See `scipy docs <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for more details.
+        digits : int
+            The number of digits to round the output.
+        min_val : int, float, or None
+            The minimum value for the results. All results below min_val will be assigned min_val.
+
+        Returns
+        -------
+        DataFrame
+        """
+        ## Prepare input data
+        point_data = self.point_data.copy()
+        sites1 = point_data[['x', 'y']].drop_duplicates().reset_index(drop=True).copy()
+        rem_sites = random.sample(range(len(sites1)), int(len(sites1)*test_perc))
+        new_sites1 = sites1.loc[~sites1.index.isin(rem_sites)]
+        new_point_data = pd.merge(point_data, new_sites1, on=['x', 'y'])
+
+        ## Create grid from grid and points
+        self.point_data = new_point_data
+        grid_grid = self.adjust_grid_from_points(grid_res, to_crs, order, method, digits, min_val)
+        self.point_data = point_data
+
+        ## Create grid from new points
+        points_grid = interp2d.points_to_grid(new_point_data, 'time', 'x', 'y', 'precip', grid_res, self._point_crs, to_crs, (float(grid_grid.x.min()), float(grid_grid.x.max()), float(grid_grid.y.min()), float(grid_grid.y.max())), method, 'nearest', np.nan, digits, min_val)
+
+        ## Extract and compare
+        rem_sites1 = sites1.loc[sites1.index.isin(rem_sites)]
+        rem_point_data = pd.merge(point_data, rem_sites1, on=['x', 'y'])
+
+        grid_points = interp2d.grid_to_points(grid_grid, 'time', 'x', 'y', 'precip', rem_sites1, to_crs, to_crs, 2, digits, min_val).rename(columns={'precip': 'grid_precip'})
+        points_points = interp2d.grid_to_points(points_grid, 'time', 'x', 'y', 'precip', rem_sites1, to_crs, to_crs, 2, digits, min_val).rename(columns={'precip': 'point_precip'})
+
+        comp_data1 = pd.merge(rem_point_data, points_points.reset_index(), on=['time', 'x', 'y'])
+        comp_data2 = pd.merge(comp_data1, grid_points.reset_index(), on=['time', 'x', 'y']).set_index(['time', 'x', 'y']).sort_index()
+
+        return comp_data2
+
+
+
+
+

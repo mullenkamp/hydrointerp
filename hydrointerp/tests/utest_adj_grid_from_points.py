@@ -176,8 +176,8 @@ new_grid = self.adjust_grid_from_points(10000, to_crs)
 new_grid.precip.plot(x='x', y='y', col='time', col_wrap=2)
 
 
-
-
+comp_res = self.validate_grid_from_points(0.08, 10000, to_crs)
+comp_res
 
 
 
