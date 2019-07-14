@@ -10,7 +10,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 name = 'hydrointerp'
 main_package = 'hydrointerp'
 datasets = 'datasets'
-version = '1.2.1'
+version = '1.2.5'
 
 # The below code is for readthedocs. To have sphinx/readthedocs interact with
 # the contained package, readthedocs needs to build the package. But the dependencies
@@ -160,7 +160,7 @@ setup(
     # If using Python 2.6 or earlier, then these have to be included in
     # MANIFEST.in as well.
     package_data={  # Optional
-        main_package: [datasets + '/*.nc'],
+        main_package: [datasets + '/*.nc', datasets + '/*.csv'],
     },
 
     # Although 'package_data' is the preferred approach, in some case you may

@@ -4,7 +4,7 @@ import os
 __all__ = ['available', 'get_path']
 
 _module_path = os.path.dirname(__file__)
-_available_data = {p.split('.')[0]: p for p in os.listdir(_module_path) if p.endswith('.nc')}
+_available_data = {p.split('.')[0]: p for p in os.listdir(_module_path) if (p.endswith('.nc') or p.endswith('.csv'))}
 available = list(_available_data.keys())
 
 
@@ -15,7 +15,7 @@ def get_path(dataset):
     Parameters
     ----------
     dataset : str
-        The name of the dataset. See ``nzmetservice.datasets.available`` for
+        The name of the dataset. See ``hydrointerp.datasets.available`` for
         all options.
 
     """
