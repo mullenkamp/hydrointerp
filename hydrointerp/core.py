@@ -322,15 +322,14 @@ class Interp(object):
         grid_grid = self.adjust_grid_from_points(grid_res, to_crs, order, method, digits, min_val)
         self.point_data = point_data
 
-        ## Create grid from new points
-        points_grid = interp2d.points_to_grid(new_point_data, 'time', 'x', 'y', 'precip', grid_res, self._point_crs, to_crs, (float(grid_grid.x.min()), float(grid_grid.x.max()), float(grid_grid.y.min()), float(grid_grid.y.max())), method, 'nearest', np.nan, digits, min_val)
-
-        ## Extract and compare
+        ## Create points from new points
         rem_sites1 = sites1.loc[sites1.index.isin(rem_sites)]
         rem_point_data = pd.merge(point_data, rem_sites1, on=['x', 'y'])
 
+        points_points = interp2d.points_to_points(new_point_data, 'time', 'x', 'y', 'precip', rem_sites1, to_crs, to_crs, method, digits, min_val).rename(columns={'precip': 'point_precip'})
+
+        ## Extract and compare
         grid_points = interp2d.grid_to_points(grid_grid, 'time', 'x', 'y', 'precip', rem_sites1, to_crs, to_crs, 2, digits, min_val).rename(columns={'precip': 'grid_precip'})
-        points_points = interp2d.grid_to_points(points_grid, 'time', 'x', 'y', 'precip', rem_sites1, to_crs, to_crs, 2, digits, min_val).rename(columns={'precip': 'point_precip'})
 
         comp_data1 = pd.merge(rem_point_data, points_points.reset_index(), on=['time', 'x', 'y'])
         comp_data2 = pd.merge(comp_data1, grid_points.reset_index(), on=['time', 'x', 'y']).set_index(['time', 'x', 'y']).sort_index()
