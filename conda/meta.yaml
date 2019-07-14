@@ -1,6 +1,6 @@
 {% set name = "hydrointerp" %}
-{% set version = "1.2.3" %}
-{% set sha256 = "0267b4869592cd37ab985bacf93212f0b6c53356b332d01c9e857995f6be20b8" %}
+{% set version = "1.2.4" %}
+{% set sha256 = "f0774fc2befcb6eb659529cab310e99ca6abca81c45c542a756ab77e17d8d56b" %}
 
 # sha256 is the prefered checksum -- you can get it for a file with:
 #  `openssl sha256 <file name>`.

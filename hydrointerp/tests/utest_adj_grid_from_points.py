@@ -103,13 +103,17 @@ new_grid.precip.isel(time=0).plot()
 
 ds1 = xr.open_dataset(os.path.join(nc_dir, nc2))
 
-ds2 = ds1[[grid_data_name, 'precipitationQualityIndex']].copy()
+ds2 = ds1[[grid_data_name, 'precipitationQualityIndex']].sel(time=slice('2015-06-18', '2015-06-19')).copy()
 
 ds1.close()
 del ds1
 
 da1 = ds2[grid_data_name].resample(time='D', closed='right', label='left').sum('time')
 da2 = ds2['precipitationQualityIndex'].resample(time='D', closed='right', label='left').mean('time')
+
+ds2b = xr.merge([da1, da2])
+
+ds2b.to_netcdf(r'E:\ecan\git\hydrointerp\hydrointerp\datasets\nasa_gpm_2015-06-18.nc')
 
 ds3 = da1.where(da2 > 0.4).to_dataset()
 
@@ -163,6 +167,10 @@ ts_data.DateTime = pd.to_datetime(ts_data.DateTime)
 site_data = mssql.rd_sql(server, db, 'ExternalSite', ['ExtSiteID', 'NZTMX', 'NZTMY'], where_in={'ExtSiteID': summ2.ExtSiteID.tolist()}).round()
 
 point_data = pd.merge(ts_data, site_data, on='ExtSiteID').drop('ExtSiteID', axis=1)
+point_data.rename(columns={'Value': 'precip', 'DateTime': 'date'}, inplace=True)
+
+point_data.to_csv(r'E:\ecan\git\hydrointerp\hydrointerp\datasets\ecan_data_2015-06-18.csv', index=False)
+
 
 self = Interp(grid_data, grid_time_name, grid_x_name, grid_y_name, grid_data_name, grid_crs, point_data, point_time_name, point_x_name, point_y_name, point_data_name, point_crs)
 

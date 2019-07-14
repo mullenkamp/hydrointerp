@@ -155,7 +155,7 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
 
 def grid_to_points(grid, time_name, x_name, y_name, data_name, point_data, from_crs, to_crs=None, order=3, digits=2, min_val=None):
     """
-    Function to take a dataframe of point value inputs (df) and interpolate to other points (point_data). Uses the `scipy griddata function <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for interpolation.
+    Function to take a dataframe of point value inputs (df) and interpolate to other points (point_data). Uses the scipy interpolation function called `map_coordinates <https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.map_coordinates.html>`_.
 
     Parameters
     ----------

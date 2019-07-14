@@ -1,11 +1,9 @@
-ETo - A Python package for calculating reference evapotranspiration
-===================================================================
+hydrointerp - A Python package for 2D interpolation of hydrologic time series data
+==================================================================================
 
-The ETo package contains a class and associated functions to calculate reference evapotranspiration (ETo) using the `UN-FAO 56 paper <http://www.fao.org/docrep/X0490E/X0490E00.htm>`_ [1]. Additional functions have been added to calculate historic ETo or potential evapotranspiration (PET) for comparison purposes.
+The hydrointerp package contains a class and associated interpolation functions specifically designed for 2D hydrologic data with time series. Additional functions have been added to calculate historic ETo or potential evapotranspiration (PET) for comparison purposes. The core functionality is derived from the `Scipy <https://docs.scipy.org/doc/scipy/reference/index.html>`_ interpolation functions `griddata <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ and `map_coordinates <https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.map_coordinates.html>`_.
 
-The GitHub repository is found `here <https://github.com/mullenkamp/ETo>`_
-
-A parameter estimation function hs also been added to the base class to convert most any variety of metereological parameter inputs to the necessary parameters needed to calculate ETo.
+The GitHub repository is found `here <https://github.com/mullenkamp/hydrointerp>`_
 
 
 .. toctree::
@@ -13,11 +11,7 @@ A parameter estimation function hs also been added to the base class to convert 
    :caption: Modules
 
    intro
-   methods
    installation
    usage
    package_references
    license-terms
-
-
-.. [1] Allen, R. G., Pereira, L. S., Raes, D., & Smith, M. (1998). Crop evapotranspiration-Guidelines for computing crop water requirements-FAO Irrigation and drainage paper 56. FAO, Rome, 300(9), D05109.
