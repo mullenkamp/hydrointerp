@@ -43,7 +43,7 @@ def _process_grid_input(input_data, time_name, x_name, y_name, data_name, zero_p
 
 def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs, to_crs=None, bbox=None, order=3, extrapolation='constant', fill_val=np.nan, digits=2, min_val=None):
     """
-    Function to interpolate regularly or irregularly spaced values over many time stamps. Each time stamp of spatial values are interpolated independently (2D interpolation as opposed to 3D interpolation). Returns an xarray Dataset with the 3 dimensions. Uses the scipy interpolation function called `map_coordinates <https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.map_coordinates.html>`_.
+    Function to interpolate regularly or irregularly spaced values over many time stamps. Each time stamp of spatial values are interpolated independently (2D interpolation as opposed to 3D interpolation). Returns an xarray Dataset with the 3 dimensions. Uses the scipy interpolation function called map_coordinates.
 
     Parameters
     ----------
@@ -68,7 +68,7 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
     order : int
         The order of the spline interpolation, default is 3. The order has to be in the range 0-5. An order of 1 is linear interpolation.
     extrapolation : str
-        The equivalent of 'mode' in the map_coordinates function. Options are: 'constant', 'nearest', 'reflect', 'mirror', and 'wrap'. Most reseaonable options for this function will be either 'constant' or 'nearest'. See `scipy docs <https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.map_coordinates.html>`_ for more details.
+        The equivalent of 'mode' in the map_coordinates function. Options are: 'constant', 'nearest', 'reflect', 'mirror', and 'wrap'. Most reseaonable options for this function will be either 'constant' or 'nearest'. See `<https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.map_coordinates.html>`_ for more details.
     fill_val : int or float
         If 'constant' if passed to the extrapolation parameter, fill_val assigns the value outside of the boundary. Defaults to numpy.nan.
     digits : int
@@ -155,7 +155,7 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
 
 def grid_to_points(grid, time_name, x_name, y_name, data_name, point_data, from_crs, to_crs=None, order=3, digits=2, min_val=None):
     """
-    Function to take a dataframe of point value inputs (df) and interpolate to other points (point_data). Uses the scipy interpolation function called `map_coordinates <https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.map_coordinates.html>`_.
+    Function to take a dataframe of point value inputs (df) and interpolate to other points (point_data). Uses the scipy interpolation function called map_coordinate.
 
     Parameters
     ----------
@@ -247,7 +247,7 @@ def grid_to_points(grid, time_name, x_name, y_name, data_name, point_data, from_
 
 def points_to_grid(df, time_name, x_name, y_name, data_name, grid_res, from_crs, to_crs=None, bbox=None, method='linear', extrapolation='contstant', fill_val=np.nan, digits=2, min_val=None):
     """
-    Function to take a dataframe of point value inputs (df) and interpolate to a grid. Uses the `scipy griddata function <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for interpolation.
+    Function to take a dataframe of point value inputs (df) and interpolate to a grid. Uses the scipy griddata function for interpolation.
 
     Parameters
     ----------
@@ -270,7 +270,7 @@ def points_to_grid(df, time_name, x_name, y_name, data_name, grid_res, from_crs,
     bbox : tuple of int or float
         The bounding box for the output interpolation in the to_crs projection. None will return a similar grid extent as the input. The tuple should contain four ints or floats in the following order: (x_min, x_max, y_min, y_max)
     method : str
-        The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See `scipy docs <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for more details.
+        The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See `<https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for more details.
     extrapolation : str
         Either 'constant' or 'nearest'.
     fill_val : int or float
@@ -351,7 +351,7 @@ def points_to_grid(df, time_name, x_name, y_name, data_name, grid_res, from_crs,
 
 def points_to_points(df, time_name, x_name, y_name, data_name, point_data, from_crs, to_crs=None, method='linear', digits=2, min_val=None):
     """
-    Function to take a dataframe of point value inputs (df) and interpolate to other points (point_data). Uses the `scipy griddata function <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for interpolation.
+    Function to take a dataframe of point value inputs (df) and interpolate to other points (point_data). Uses the scipy griddata function for interpolation.
 
     Parameters
     ----------
@@ -372,7 +372,7 @@ def points_to_points(df, time_name, x_name, y_name, data_name, point_data, from_
     to_crs : int or str or None
         The projection for the output data similar to from_crs.
     method : str
-        The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See `scipy docs <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for more details.
+        The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See `<https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for more details.
     fill_val : int or float
         fill_val assigns the value outside of the boundary. Defaults to numpy.nan.
     digits : int
@@ -454,7 +454,7 @@ def grid_interp_na(grid, time_name, x_name, y_name, data_name, method='linear', 
     data_name : str
         If grid is a DataFrame, then data_name is the data column name. If grid is a Dataset, then data_name is the data variable name.
     method : str
-        The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See `scipy docs <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for more details.
+        The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See `<https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for more details.
     min_val : int, float, or None
         The minimum value for the results. All results below min_val will be assigned min_val.
 
@@ -480,7 +480,3 @@ def grid_interp_na(grid, time_name, x_name, y_name, data_name, method='linear', 
     new_ds = xr.DataArray(arr2, coords=[time1, grid[y_name].values, grid[x_name].values], dims=['time', y_name, x_name], name=data_name).to_dataset()
 
     return new_ds
-
-
-
-

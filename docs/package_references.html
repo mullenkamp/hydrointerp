@@ -1,0 +1,447 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="Python" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="Python" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Package References &mdash; hydrointerp 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="License and terms of usage" href="license-terms.html" />
+    <link rel="prev" title="How to use hydrointerp" href="usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> hydrointerp
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">How to use hydrointerp</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Package References</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#base-class">Base class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nan-interpolator">Nan interpolator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#base-interpolators">Base interpolators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adjust-grid-from-points">Adjust grid from points</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api-pages">API Pages</a><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="license-terms.html">License and terms of usage</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">hydrointerp</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Package References</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/package_references.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="package-references">
+<h1>Package References<a class="headerlink" href="#package-references" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="base-class">
+<h2>Base class<a class="headerlink" href="#base-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="hydrointerp.Interp">
+<em class="property">class </em><code class="sig-prename descclassname">hydrointerp.</code><code class="sig-name descname">Interp</code><span class="sig-paren">(</span><em class="sig-param">grid_data=None</em>, <em class="sig-param">grid_time_name=None</em>, <em class="sig-param">grid_x_name=None</em>, <em class="sig-param">grid_y_name=None</em>, <em class="sig-param">grid_data_name=None</em>, <em class="sig-param">grid_crs=None</em>, <em class="sig-param">point_data=None</em>, <em class="sig-param">point_time_name=None</em>, <em class="sig-param">point_x_name=None</em>, <em class="sig-param">point_y_name=None</em>, <em class="sig-param">point_data_name=None</em>, <em class="sig-param">point_crs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#hydrointerp.Interp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base Interp class to prepare the input data for the interpolation functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>DataFrame</em><em> or </em><em>Dataset</em>) -- A pandas DataFrame containing four columns as shown in the below parameters or an Xarray Dataset.</p></li>
+<li><p><strong>time_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) -- If grid is a DataFrame, then time_name is the time column name. If grid is a Dataset, then time_name is the time coordinate name.</p></li>
+<li><p><strong>x_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) -- If grid is a DataFrame, then x_name is the x column name. If grid is a Dataset, then x_name is the x coordinate name.</p></li>
+<li><p><strong>y_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) -- If grid is a DataFrame, then y_name is the y column name. If grid is a Dataset, then y_name is the y coordinate name.</p></li>
+<li><p><strong>data_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) -- If grid is a DataFrame, then data_name is the data column name. If grid is a Dataset, then data_name is the data variable name.</p></li>
+<li><p><strong>from_crs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) -- <p>The projection info for the input data if the result should be reprojected to the to_crs projection (either a proj4 str or epsg int).</p>
+<dl class="field-list simple">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><p></p></dd>
+<dt class="field-even">rtype</dt>
+<dd class="field-even"><p>Interp object</p>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="nan-interpolator">
+<h2>Nan interpolator<a class="headerlink" href="#nan-interpolator" title="Permalink to this headline">¶</a></h2>
+<dl class="method">
+<dt id="hydrointerp.Interp._grid_interp_na">
+<code class="sig-prename descclassname">Interp.</code><code class="sig-name descname">_grid_interp_na</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">method='linear'</em>, <em class="sig-param">min_val=None</em>, <em class="sig-param">inplace=True</em><span class="sig-paren">)</span><a class="headerlink" href="#hydrointerp.Interp._grid_interp_na" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to fill nan's in the grid_data to make it complete. Necessary for grid_to_* functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) -- The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html">https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html</a> for more details.</p></li>
+<li><p><strong>min_val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) -- The minimum value for the results. All results below min_val will be assigned min_val.</p></li>
+<li><p><strong>inplace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) -- Should the new grid overwrite the grid_data from initialisation?</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Xarray Dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="base-interpolators">
+<h2>Base interpolators<a class="headerlink" href="#base-interpolators" title="Permalink to this headline">¶</a></h2>
+<dl class="method">
+<dt id="hydrointerp.Interp._grid_to_grid">
+<code class="sig-prename descclassname">Interp.</code><code class="sig-name descname">_grid_to_grid</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">grid_res</em>, <em class="sig-param">to_crs=None</em>, <em class="sig-param">bbox=None</em>, <em class="sig-param">order=3</em>, <em class="sig-param">extrapolation='constant'</em>, <em class="sig-param">fill_val=nan</em>, <em class="sig-param">digits=2</em>, <em class="sig-param">min_val=None</em><span class="sig-paren">)</span><a class="headerlink" href="#hydrointerp.Interp._grid_to_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to interpolate regularly or irregularly spaced values over many time stamps. Each time stamp of spatial values are interpolated independently (2D interpolation as opposed to 3D interpolation). Returns an xarray Dataset with the 3 dimensions. Uses the scipy interpolation function called map_coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_res</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) -- The resulting grid resolution in the unit of the final projection (usually meters or decimal degrees).</p></li>
+<li><p><strong>to_crs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) -- The projection for the output data similar to from_crs.</p></li>
+<li><p><strong>bbox</strong> (<em>tuple of int</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) -- The bounding box for the output interpolation in the to_crs projection. None will return a similar grid extent as the input. The tuple should contain four ints or floats in the following order: (x_min, x_max, y_min, y_max)</p></li>
+<li><p><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- The order of the spline interpolation, default is 3. The order has to be in the range 0-5. An order of 1 is linear interpolation.</p></li>
+<li><p><strong>extrapolation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) -- The equivalent of 'mode' in the map_coordinates function. Options are: 'constant', 'nearest', 'reflect', 'mirror', and 'wrap'. Most reseaonable options for this function will be either 'constant' or 'nearest'. See <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.map_coordinates.html">https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.map_coordinates.html</a> for more details.</p></li>
+<li><p><strong>fill_val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) -- If 'constant' if passed to the extrapolation parameter, fill_val assigns the value outside of the boundary. Defaults to numpy.nan.</p></li>
+<li><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- The number of digits to round the output.</p></li>
+<li><p><strong>min_val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) -- The minimum value for the results. All results below min_val will be assigned min_val.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>xarray Dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydrointerp.Interp._points_to_grid">
+<code class="sig-prename descclassname">Interp.</code><code class="sig-name descname">_points_to_grid</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">grid_res</em>, <em class="sig-param">to_crs=None</em>, <em class="sig-param">bbox=None</em>, <em class="sig-param">method='linear'</em>, <em class="sig-param">extrapolation='contstant'</em>, <em class="sig-param">fill_val=nan</em>, <em class="sig-param">digits=2</em>, <em class="sig-param">min_val=None</em><span class="sig-paren">)</span><a class="headerlink" href="#hydrointerp.Interp._points_to_grid" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Function to take a dataframe of point value inputs (df) and interpolate to a grid. Uses the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html">scipy griddata function</a> for interpolation.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_res</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) -- The resulting grid resolution in the unit of the final projection (usually meters or decimal degrees).</p></li>
+<li><p><strong>to_crs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) -- The projection for the output data similar to from_crs.</p></li>
+<li><p><strong>bbox</strong> (<em>tuple of int</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) -- The bounding box for the output interpolation in the to_crs projection. None will return a similar grid extent as the input. The tuple should contain four ints or floats in the following order: (x_min, x_max, y_min, y_max)</p></li>
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) -- <p>The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html">https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html</a> for more details.</p>
+</p></li>
+<li><p><strong>extrapolation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) -- Either 'constant' or 'nearest'.</p></li>
+<li><p><strong>fill_val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) -- If 'constant' if passed to the extrapolation parameter, fill_val assigns the value outside of the boundary. Defaults to numpy.nan.</p></li>
+<li><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- The number of digits to round the output.</p></li>
+<li><p><strong>min_val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) -- <p>The minimum value for the results. All results below min_val will be assigned min_val.</p>
+<dl class="field-list simple">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><p></p></dd>
+<dt class="field-even">rtype</dt>
+<dd class="field-even"><p>xarray Dataset</p>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydrointerp.Interp._grid_to_points">
+<code class="sig-prename descclassname">Interp.</code><code class="sig-name descname">_grid_to_points</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">point_data</em>, <em class="sig-param">to_crs=None</em>, <em class="sig-param">bbox=None</em>, <em class="sig-param">order=3</em>, <em class="sig-param">digits=2</em>, <em class="sig-param">min_val=None</em><span class="sig-paren">)</span><a class="headerlink" href="#hydrointerp.Interp._grid_to_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to take a dataframe of point value inputs (df) and interpolate to other points (point_data). Uses the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html">scipy griddata function</a> for interpolation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>point_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>DataFrame</em>) -- Path to geometry file of points to be interpolated (e.g. shapefile). Can be any file type that fiona/gdal can open. It can also be a DataFrame with 'x' and 'y' columns and the crs must be the same as to_crs.</p></li>
+<li><p><strong>to_crs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) -- The projection for the output data similar to from_crs.</p></li>
+<li><p><strong>bbox</strong> (<em>tuple of int</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) -- The bounding box for the output interpolation in the to_crs projection. None will return a similar grid extent as the input. The tuple should contain four ints or floats in the following order: (x_min, x_max, y_min, y_max)</p></li>
+<li><p><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- The order of the spline interpolation, default is 3. The order has to be in the range 0-5. An order of 1 is linear interpolation.</p></li>
+<li><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- The number of digits to round the output.</p></li>
+<li><p><strong>min_val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) -- The minimum value for the results. All results below min_val will be assigned min_val.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydrointerp.Interp._points_to_points">
+<code class="sig-prename descclassname">Interp.</code><code class="sig-name descname">_points_to_points</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">point_data</em>, <em class="sig-param">to_crs=None</em>, <em class="sig-param">method='linear'</em>, <em class="sig-param">digits=2</em>, <em class="sig-param">min_val=None</em><span class="sig-paren">)</span><a class="headerlink" href="#hydrointerp.Interp._points_to_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to interpolate regularly or irregularly spaced values over many time stamps. Each time stamp of spatial values are interpolated independently (2D interpolation as opposed to 3D interpolation). Returns an xarray Dataset with the 3 dimensions. Uses the scipy interpolation function called map_coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>point_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>DataFrame</em>) -- Path to geometry file of points to be interpolated (e.g. shapefile). Can be any file type that fiona/gdal can open. It can also be a DataFrame with 'x' and 'y' columns and the crs must be the same as to_crs.</p></li>
+<li><p><strong>to_crs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) -- The projection for the output data similar to from_crs.</p></li>
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) -- The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'.</p></li>
+<li><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- The number of digits to round the output.</p></li>
+<li><p><strong>min_val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) -- The minimum value for the results. All results below min_val will be assigned min_val.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="adjust-grid-from-points">
+<h2>Adjust grid from points<a class="headerlink" href="#adjust-grid-from-points" title="Permalink to this headline">¶</a></h2>
+<dl class="method">
+<dt id="hydrointerp.Interp._adjust_grid_from_points">
+<code class="sig-prename descclassname">Interp.</code><code class="sig-name descname">_adjust_grid_from_points</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">grid_res=None</em>, <em class="sig-param">to_crs=None</em>, <em class="sig-param">order=2</em>, <em class="sig-param">method='linear'</em>, <em class="sig-param">digits=2</em>, <em class="sig-param">min_val=0</em><span class="sig-paren">)</span><a class="headerlink" href="#hydrointerp.Interp._adjust_grid_from_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to adjust a grid by forcing it through point data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_res</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) -- The resulting grid resolution in the unit of the final projection (usually meters or decimal degrees).</p></li>
+<li><p><strong>to_crs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) -- The projection for the output data similar to from_crs.</p></li>
+<li><p><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- The order of the spline interpolation, default is 3. The order has to be in the range 0-5. An order of 1 is linear interpolation.</p></li>
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) -- <p>The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html">https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html</a> for more details.</p>
+</p></li>
+<li><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- The number of digits to round the output.</p></li>
+<li><p><strong>min_val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) -- The minimum value for the results. All results below min_val will be assigned min_val.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydrointerp.Interp._validate_grid_from_points">
+<code class="sig-prename descclassname">Interp.</code><code class="sig-name descname">_validate_grid_from_points</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">test_perc=0.1</em>, <em class="sig-param">grid_res=None</em>, <em class="sig-param">to_crs=None</em>, <em class="sig-param">order=2</em>, <em class="sig-param">method='linear'</em>, <em class="sig-param">digits=2</em>, <em class="sig-param">min_val=0</em><span class="sig-paren">)</span><a class="headerlink" href="#hydrointerp.Interp._validate_grid_from_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to validate a grid created by the adjust_grid_from_points method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_res</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) -- The resulting grid resolution in the unit of the final projection (usually meters or decimal degrees).</p></li>
+<li><p><strong>to_crs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) -- The projection for the output data similar to from_crs.</p></li>
+<li><p><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- The order of the spline interpolation, default is 3. The order has to be in the range 0-5. An order of 1 is linear interpolation.</p></li>
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) -- <p>The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html">https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html</a> for more details.</p>
+</p></li>
+<li><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) -- The number of digits to round the output.</p></li>
+<li><p><strong>min_val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a>) -- The minimum value for the results. All results below min_val will be assigned min_val.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="api-pages">
+<h2>API Pages<a class="headerlink" href="#api-pages" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="license-terms.html" class="btn btn-neutral float-right" title="License and terms of usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="usage.html" class="btn btn-neutral float-left" title="How to use hydrointerp" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019 Mike Kittridge
+      <span class="lastupdated">
+        Last updated on Jul 15, 2019.
+      </span>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

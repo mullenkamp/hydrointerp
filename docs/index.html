@@ -1,0 +1,238 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="Python" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="Python" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>hydrointerp - A Python package for 2D interpolation of hydrologic time series data &mdash; hydrointerp 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Introduction" href="intro.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home"> hydrointerp
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">How to use hydrointerp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="package_references.html">Package References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license-terms.html">License and terms of usage</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">hydrointerp</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li>hydrointerp - A Python package for 2D interpolation of hydrologic time series data</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="hydrointerp-a-python-package-for-2d-interpolation-of-hydrologic-time-series-data">
+<h1>hydrointerp - A Python package for 2D interpolation of hydrologic time series data<a class="headerlink" href="#hydrointerp-a-python-package-for-2d-interpolation-of-hydrologic-time-series-data" title="Permalink to this headline">¶</a></h1>
+<p>The hydrointerp package contains a class and associated interpolation functions specifically designed for 2D hydrologic data with time series. Additional functions have been added to calculate historic ETo or potential evapotranspiration (PET) for comparison purposes. The core functionality is derived from the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/index.html">Scipy</a> interpolation functions <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html">griddata</a> and <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.map_coordinates.html">map_coordinates</a>.</p>
+<p>The GitHub repository is found <a class="reference external" href="https://github.com/mullenkamp/hydrointerp">here</a></p>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">How to use hydrointerp</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#necessary-imports">Necessary imports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#loading-in-appropriate-input-data">Loading in appropriate input data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#initialising-interp">Initialising Interp</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#nan-filling">Nan filling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#base-interpolators">Base Interpolators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#adjust-grid-from-points">Adjust grid from points</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="package_references.html">Package References</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="package_references.html#base-class">Base class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="package_references.html#nan-interpolator">Nan interpolator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="package_references.html#base-interpolators">Base interpolators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="package_references.html#adjust-grid-from-points">Adjust grid from points</a></li>
+<li class="toctree-l2"><a class="reference internal" href="package_references.html#api-pages">API Pages</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="license-terms.html">License and terms of usage</a></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="intro.html" class="btn btn-neutral float-right" title="Introduction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019 Mike Kittridge
+      <span class="lastupdated">
+        Last updated on Jul 15, 2019.
+      </span>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
