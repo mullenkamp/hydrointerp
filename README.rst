@@ -1,7 +1,7 @@
 hydrointerp - A Python package for interpolating hydrologic data
 ===================================================================
 
-The hydrointerp package includes several interpolation functions specifically designed for hydrologic data. These are mainly derrived from `Scipy <https://docs.scipy.org/doc/scipy/reference/index.html>`_ interpolation functions like `griddata <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_.
+The hydrointerp package includes several interpolation functions specifically designed for hydrologic data. These are mainly derived from `Scipy <https://docs.scipy.org/doc/scipy/reference/index.html>`_ interpolation functions like `griddata <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_.
 
 Documentation
 --------------
