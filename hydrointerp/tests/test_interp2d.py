@@ -58,8 +58,12 @@ ds2 = ds[[grid_data_name]].where(ds.precipitationQualityIndex > 0.4)
 ### Close the file (by removing the object)
 ds.close()
 
-### Save as tif
+### Convert to DataFrame
 df5 = ds2[grid_data_name].to_dataframe().reset_index()
+
+### Create example points
+points_df = df1.loc[[6, 15, 132], [point_x_name, point_y_name]].copy()
+points_df.rename(columns={point_x_name: 'x', point_y_name: 'y'}, inplace=True)
 
 #def test_save_geotiff():
 #    save_geotiff(df5, from_crs, 'precipitationCal', 'lon', 'lat', export_path=tif0)
@@ -87,10 +91,6 @@ def test_grid_to_grid2():
 def test_points_to_grid2():
     interp2 = interpc.points_to_grid(grid_res, to_crs, bbox, method, extrapolation, min_val=min_val)
     assert 28 > interp2.precip.mean() > 27
-
-
-points_df = df1.loc[[6, 15, 132], [point_x_name, point_y_name]].copy()
-points_df.rename(columns={point_x_name: 'x', point_y_name: 'y'}, inplace=True)
 
 
 def test_grid_to_points2():

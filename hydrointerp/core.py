@@ -77,7 +77,7 @@ class Interp(object):
 
     def _grid_to_grid(self, grid_res, to_crs=None, bbox=None, order=3, extrapolation='constant', fill_val=np.nan, digits=2, min_val=None):
         """
-        Function to interpolate regularly or irregularly spaced values over many time stamps. Each time stamp of spatial values are interpolated independently (2D interpolation as opposed to 3D interpolation). Returns an xarray Dataset with the 3 dimensions. Uses the scipy interpolation function called `map_coordinates <https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.map_coordinates.html>`_.
+        Function to interpolate regularly or irregularly spaced values over many time stamps. Each time stamp of spatial values are interpolated independently (2D interpolation as opposed to 3D interpolation). Returns an xarray Dataset with the 3 dimensions. Uses the scipy interpolation function called map_coordinates.
 
         Parameters
         ----------
@@ -90,7 +90,7 @@ class Interp(object):
         order : int
             The order of the spline interpolation, default is 3. The order has to be in the range 0-5. An order of 1 is linear interpolation.
         extrapolation : str
-            The equivalent of 'mode' in the map_coordinates function. Options are: 'constant', 'nearest', 'reflect', 'mirror', and 'wrap'. Most reseaonable options for this function will be either 'constant' or 'nearest'. See `scipy docs <https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.map_coordinates.html>`_ for more details.
+            The equivalent of 'mode' in the map_coordinates function. Options are: 'constant', 'nearest', 'reflect', 'mirror', and 'wrap'. Most reseaonable options for this function will be either 'constant' or 'nearest'. See `<https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.map_coordinates.html>`_ for more details.
         fill_val : int or float
             If 'constant' if passed to the extrapolation parameter, fill_val assigns the value outside of the boundary. Defaults to numpy.nan.
         digits : int
@@ -144,7 +144,7 @@ class Interp(object):
     bbox : tuple of int or float
         The bounding box for the output interpolation in the to_crs projection. None will return a similar grid extent as the input. The tuple should contain four ints or floats in the following order: (x_min, x_max, y_min, y_max)
     method : str
-        The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See `scipy docs <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for more details.
+        The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See `<https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for more details.
     extrapolation : str
         Either 'constant' or 'nearest'.
     fill_val : int or float
@@ -163,7 +163,7 @@ class Interp(object):
 
     def _points_to_points(self, point_data, to_crs=None, method='linear', digits=2, min_val=None):
         """
-        Function to interpolate regularly or irregularly spaced values over many time stamps. Each time stamp of spatial values are interpolated independently (2D interpolation as opposed to 3D interpolation). Returns an xarray Dataset with the 3 dimensions. Uses the scipy interpolation function called `map_coordinates <https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.map_coordinates.html>`_.
+        Function to interpolate regularly or irregularly spaced values over many time stamps. Each time stamp of spatial values are interpolated independently (2D interpolation as opposed to 3D interpolation). Returns an xarray Dataset with the 3 dimensions. Uses the scipy interpolation function called map_coordinates.
 
         Parameters
         ----------
@@ -172,7 +172,7 @@ class Interp(object):
         to_crs : int or str or None
             The projection for the output data similar to from_crs.
         method : str
-        The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See `scipy docs <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for more details.
+            The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'.
         digits : int
             The number of digits to round the output.
         min_val : int, float, or None
@@ -193,7 +193,7 @@ class Interp(object):
         Parameters
         ----------
         method : str
-            The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See `scipy docs <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for more details.
+            The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See `<https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for more details.
         min_val : int, float, or None
             The minimum value for the results. All results below min_val will be assigned min_val.
         inplace : bool
@@ -224,7 +224,7 @@ class Interp(object):
         order : int
             The order of the spline interpolation, default is 3. The order has to be in the range 0-5. An order of 1 is linear interpolation.
         method : str
-            The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See `scipy docs <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for more details.
+            The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See `<https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for more details.
         digits : int
             The number of digits to round the output.
         min_val : int, float, or None
@@ -300,7 +300,7 @@ class Interp(object):
         order : int
             The order of the spline interpolation, default is 3. The order has to be in the range 0-5. An order of 1 is linear interpolation.
         method : str
-            The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See `scipy docs <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for more details.
+            The scipy griddata interpolation method to be applied. Options are 'nearest', 'linear', and 'cubic'. See `<https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html>`_ for more details.
         digits : int
             The number of digits to round the output.
         min_val : int, float, or None
@@ -335,8 +335,3 @@ class Interp(object):
         comp_data2 = pd.merge(comp_data1, grid_points.reset_index(), on=['time', 'x', 'y']).set_index(['time', 'x', 'y']).sort_index()
 
         return comp_data2
-
-
-
-
-

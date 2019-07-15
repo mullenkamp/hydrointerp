@@ -1,0 +1,476 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="Python" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="Python" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>How to use hydrointerp &mdash; hydrointerp 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Package References" href="package_references.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> hydrointerp
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to use hydrointerp</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#necessary-imports">Necessary imports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loading-in-appropriate-input-data">Loading in appropriate input data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#initialising-interp">Initialising Interp</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nan-filling">Nan filling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#base-interpolators">Base Interpolators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adjust-grid-from-points">Adjust grid from points</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="package_references.html">Package References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license-terms.html">License and terms of usage</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">hydrointerp</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>How to use hydrointerp</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="how-to-use-hydrointerp">
+<h1>How to use hydrointerp<a class="headerlink" href="#how-to-use-hydrointerp" title="Permalink to this headline">¶</a></h1>
+<p>This section will describe how to use the hydrointerp package. Nearly all outputs are either as Pandas DataFrames or Xarray Datasets.</p>
+<div class="section" id="necessary-imports">
+<h2>Necessary imports<a class="headerlink" href="#necessary-imports" title="Permalink to this headline">¶</a></h2>
+<p>For the examples, the numpy, pandas, xarray, and hydrointerp packages are needed.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="kn">as</span> <span class="nn">xr</span>
+<span class="kn">from</span> <span class="nn">hydrointerp</span> <span class="kn">import</span> <span class="n">Interp</span><span class="p">,</span> <span class="n">datasets</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="loading-in-appropriate-input-data">
+<h2>Loading in appropriate input data<a class="headerlink" href="#loading-in-appropriate-input-data" title="Permalink to this headline">¶</a></h2>
+<p>The input must be either a grid as an Xarray Dataset or as points as a Pandas DataFrame. Both of these input data must have associated naming parameters.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="go">### Input Parameters</span>
+<span class="gp">In [1]: </span><span class="n">nc1</span> <span class="o">=</span> <span class="s1">&#39;nasa_gpm_2015-06-18&#39;</span>
+
+<span class="gp">In [2]: </span><span class="n">csv1</span> <span class="o">=</span> <span class="s1">&#39;ecan_data_2015-06-18&#39;</span>
+
+<span class="gp">In [3]: </span><span class="n">grid_time_name</span> <span class="o">=</span> <span class="s1">&#39;time&#39;</span>
+
+<span class="gp">In [4]: </span><span class="n">grid_x_name</span> <span class="o">=</span> <span class="s1">&#39;lon&#39;</span>
+
+<span class="gp">In [5]: </span><span class="n">grid_y_name</span> <span class="o">=</span> <span class="s1">&#39;lat&#39;</span>
+
+<span class="gp">In [6]: </span><span class="n">grid_data_name</span> <span class="o">=</span> <span class="s1">&#39;precipitationCal&#39;</span>
+
+<span class="gp">In [7]: </span><span class="n">grid_crs</span> <span class="o">=</span> <span class="mi">4326</span>
+
+<span class="gp">In [8]: </span><span class="n">point_time_name</span> <span class="o">=</span> <span class="s1">&#39;date&#39;</span>
+
+<span class="gp">In [9]: </span><span class="n">point_x_name</span> <span class="o">=</span> <span class="s1">&#39;NZTMX&#39;</span>
+
+<span class="gp">In [10]: </span><span class="n">point_y_name</span> <span class="o">=</span> <span class="s1">&#39;NZTMY&#39;</span>
+
+<span class="gp">In [11]: </span><span class="n">point_data_name</span> <span class="o">=</span> <span class="s1">&#39;precip&#39;</span>
+
+<span class="gp">In [12]: </span><span class="n">point_crs</span> <span class="o">=</span> <span class="mi">2193</span>
+
+<span class="go">### Read input data</span>
+<span class="gp">In [13]: </span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">datasets</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">nc1</span><span class="p">))</span>
+
+<span class="gp">In [14]: </span><span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">datasets</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">csv1</span><span class="p">),</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">infer_datetime_format</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="gp">In [15]: </span><span class="k">print</span><span class="p">(</span><span class="n">df1</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+<span class="go">        date  precip      NZTMX      NZTMY</span>
+<span class="go">0 2015-06-18    96.5  1507022.0  5266024.0</span>
+<span class="go">1 2015-06-19   166.0  1507022.0  5266024.0</span>
+<span class="go">2 2015-06-18    63.0  1506391.0  5253154.0</span>
+<span class="go">3 2015-06-19    73.0  1506391.0  5253154.0</span>
+<span class="go">4 2015-06-18    88.5  1482760.0  5244669.0</span>
+
+<span class="go">### Assign nan toplaces wherethe quality index is below 0.4</span>
+<span class="gp">In [16]: </span><span class="n">ds2</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[[</span><span class="n">grid_data_name</span><span class="p">]]</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">precipitationQualityIndex</span> <span class="o">&gt;</span> <span class="mf">0.4</span><span class="p">)</span>
+
+<span class="gp">In [17]: </span><span class="k">print</span><span class="p">(</span><span class="n">ds2</span><span class="p">)</span>
+<span class="go">&lt;xarray.Dataset&gt;</span>
+<span class="go">Dimensions:           (lat: 160, lon: 150, time: 2)</span>
+<span class="go">Coordinates:</span>
+<span class="go">  * lat               (lat) float32 -48.95 -48.85 -48.75 ... -33.15 -33.05</span>
+<span class="go">  * lon               (lon) float32 165.05 165.15 165.25 ... 179.85 179.95</span>
+<span class="go">  * time              (time) datetime64[ns] 2015-06-18 2015-06-19</span>
+<span class="go">Data variables:</span>
+<span class="go">    precipitationCal  (time, lon, lat) float32 0.0068049454 0.073177755 ... 0.0</span>
+
+<span class="go">### Close the file (by removing the object)</span>
+<span class="gp">In [18]: </span><span class="n">ds</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="go">### Create example points</span>
+<span class="gp">In [19]: </span><span class="n">points_df</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">132</span><span class="p">],</span> <span class="p">[</span><span class="n">point_x_name</span><span class="p">,</span> <span class="n">point_y_name</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="gp">In [20]: </span><span class="n">points_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">point_x_name</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">point_y_name</span><span class="p">:</span> <span class="s1">&#39;y&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="initialising-interp">
+<h2>Initialising Interp<a class="headerlink" href="#initialising-interp" title="Permalink to this headline">¶</a></h2>
+<p>The package and general usage is via the main Interp class. It must be initialised with appropriate datasets and name parameters. Bare in mind, it is not required to have both input grids and points. One set is fine, and the appropriate interpolation methods will appear.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [21]: </span><span class="n">interpc</span> <span class="o">=</span> <span class="n">Interp</span><span class="p">(</span><span class="n">ds2</span><span class="p">,</span> <span class="n">grid_time_name</span><span class="p">,</span> <span class="n">grid_x_name</span><span class="p">,</span> <span class="n">grid_y_name</span><span class="p">,</span> <span class="n">grid_data_name</span><span class="p">,</span> <span class="n">grid_crs</span><span class="p">,</span> <span class="n">point_data</span><span class="o">=</span><span class="n">df1</span><span class="p">,</span> <span class="n">point_time_name</span><span class="o">=</span><span class="n">point_time_name</span><span class="p">,</span> <span class="n">point_x_name</span><span class="o">=</span><span class="n">point_x_name</span><span class="p">,</span> <span class="n">point_y_name</span><span class="o">=</span><span class="n">point_y_name</span><span class="p">,</span> <span class="n">point_data_name</span><span class="o">=</span><span class="n">point_data_name</span><span class="p">,</span> <span class="n">point_crs</span><span class="o">=</span><span class="n">point_crs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="nan-filling">
+<h2>Nan filling<a class="headerlink" href="#nan-filling" title="Permalink to this headline">¶</a></h2>
+<p>If your grid has nans (which the example does), fill those nans with the grid_interp_na method.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [22]: </span><span class="n">nan1</span> <span class="o">=</span> <span class="n">ds2</span><span class="p">[</span><span class="n">grid_data_name</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="gp">In [23]: </span><span class="n">interpc</span><span class="o">.</span><span class="n">grid_interp_na</span><span class="p">()</span>
+
+<span class="gp">In [24]: </span><span class="n">nan2</span> <span class="o">=</span> <span class="n">interpc</span><span class="o">.</span><span class="n">grid_data</span><span class="p">[</span><span class="s1">&#39;precip&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="gp">In [25]: </span><span class="k">assert</span> <span class="p">(</span><span class="n">nan1</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">nan2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="base-interpolators">
+<h2>Base Interpolators<a class="headerlink" href="#base-interpolators" title="Permalink to this headline">¶</a></h2>
+<p>All the 2D interpolators you'll need...</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="go">## Parameters</span>
+<span class="gp">In [26]: </span><span class="n">to_crs</span> <span class="o">=</span> <span class="mi">2193</span>
+
+<span class="gp">In [27]: </span><span class="n">grid_res</span> <span class="o">=</span> <span class="mi">10000</span>
+
+<span class="gp">In [28]: </span><span class="n">bbox</span><span class="o">=</span><span class="bp">None</span>
+
+<span class="gp">In [29]: </span><span class="n">order</span><span class="o">=</span><span class="mi">2</span>
+
+<span class="gp">In [30]: </span><span class="n">extrapolation</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span>
+
+<span class="gp">In [31]: </span><span class="n">cval</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+<span class="gp">In [32]: </span><span class="n">digits</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="gp">In [33]: </span><span class="n">min_lat</span> <span class="o">=</span> <span class="o">-</span><span class="mi">48</span>
+
+<span class="gp">In [34]: </span><span class="n">max_lat</span> <span class="o">=</span> <span class="o">-</span><span class="mi">41</span>
+
+<span class="gp">In [35]: </span><span class="n">min_lon</span> <span class="o">=</span> <span class="mi">170</span>
+
+<span class="gp">In [36]: </span><span class="n">max_lon</span> <span class="o">=</span> <span class="mi">178</span>
+
+<span class="gp">In [37]: </span><span class="n">min_val</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="gp">In [38]: </span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span>
+
+<span class="go">## grid to grid</span>
+<span class="gp">In [39]: </span><span class="n">interp1</span> <span class="o">=</span> <span class="n">interpc</span><span class="o">.</span><span class="n">grid_to_grid</span><span class="p">(</span><span class="n">grid_res</span><span class="p">,</span> <span class="n">to_crs</span><span class="p">,</span> <span class="n">bbox</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">extrapolation</span><span class="p">,</span> <span class="n">min_val</span><span class="o">=</span><span class="n">min_val</span><span class="p">)</span>
+<span class="go">Preparing input and output</span>
+<span class="go">Running interpolations...</span>
+<span class="go">Packaging up the output</span>
+
+<span class="gp">In [40]: </span><span class="k">print</span><span class="p">(</span><span class="n">interp1</span><span class="p">)</span>
+<span class="go">                                                                             &lt;xarray.Dataset&gt;</span>
+<span class="go">Dimensions:  (time: 2, x: 140, y: 180)</span>
+<span class="go">Coordinates:</span>
+<span class="go">  * time     (time) datetime64[ns] 2015-06-18 2015-06-19</span>
+<span class="go">  * x        (x) float64 8.568e+05 8.668e+05 8.768e+05 ... 2.237e+06 2.247e+06</span>
+<span class="go">  * y        (y) float64 4.548e+06 4.558e+06 4.568e+06 ... 6.328e+06 6.338e+06</span>
+<span class="go">Data variables:</span>
+<span class="go">    precip   (time, x, y) float32 nan nan nan nan nan ... 0.0 -0.0 0.0 nan nan</span>
+
+<span class="go">## points to grid</span>
+<span class="gp">In [41]: </span><span class="n">interp2</span> <span class="o">=</span> <span class="n">interpc</span><span class="o">.</span><span class="n">points_to_grid</span><span class="p">(</span><span class="n">grid_res</span><span class="p">,</span> <span class="n">to_crs</span><span class="p">,</span> <span class="n">bbox</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">extrapolation</span><span class="p">,</span> <span class="n">min_val</span><span class="o">=</span><span class="n">min_val</span><span class="p">)</span>
+<span class="go">                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Prepare input and output data</span>
+<span class="go">Run interpolations...</span>
+<span class="go">2015-06-18 00:00:00</span>
+<span class="go">2015-06-19 00:00:00</span>
+<span class="go">Packaging up the output</span>
+
+<span class="gp">In [42]: </span><span class="k">print</span><span class="p">(</span><span class="n">interp2</span><span class="p">)</span>
+<span class="go">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            &lt;xarray.Dataset&gt;</span>
+<span class="go">Dimensions:  (time: 2, x: 35, y: 33)</span>
+<span class="go">Coordinates:</span>
+<span class="go">  * time     (time) datetime64[ns] 2015-06-18 2015-06-19</span>
+<span class="go">  * y        (y) float64 5.018e+06 5.028e+06 5.038e+06 ... 5.328e+06 5.338e+06</span>
+<span class="go">  * x        (x) float64 1.329e+06 1.339e+06 1.349e+06 ... 1.659e+06 1.669e+06</span>
+<span class="go">Data variables:</span>
+<span class="go">    precip   (time, y, x) float64 nan nan nan nan nan ... nan nan nan nan nan</span>
+
+<span class="go">## grid to points</span>
+<span class="gp">In [43]: </span><span class="n">interp3</span> <span class="o">=</span> <span class="n">interpc</span><span class="o">.</span><span class="n">grid_to_points</span><span class="p">(</span><span class="n">points_df</span><span class="p">,</span> <span class="n">to_crs</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">min_val</span><span class="o">=</span><span class="n">min_val</span><span class="p">)</span>
+<span class="go">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Preparing input and output</span>
+<span class="go">Running interpolations...</span>
+<span class="go">Packaging up the output</span>
+
+<span class="gp">In [44]: </span><span class="k">print</span><span class="p">(</span><span class="n">interp3</span><span class="p">)</span>
+<span class="go">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     precip</span>
+<span class="go">time       x         y                    </span>
+<span class="go">2015-06-18 1515946.0 5249806.0  617.679993</span>
+<span class="go">           1581327.0 5279063.0   86.559998</span>
+<span class="go">           1437006.0 5066885.0   78.220001</span>
+<span class="go">2015-06-19 1515946.0 5249806.0   59.450001</span>
+<span class="go">           1581327.0 5279063.0   45.299999</span>
+<span class="go">           1437006.0 5066885.0    2.220000</span>
+
+<span class="go">## points to points</span>
+<span class="gp">In [45]: </span><span class="n">interp4</span> <span class="o">=</span> <span class="n">interpc</span><span class="o">.</span><span class="n">points_to_points</span><span class="p">(</span><span class="n">points_df</span><span class="p">,</span> <span class="n">to_crs</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">min_val</span><span class="o">=</span><span class="n">min_val</span><span class="p">)</span>
+<span class="go">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         2015-06-18 00:00:00</span>
+<span class="go">2015-06-19 00:00:00</span>
+
+<span class="gp">In [46]: </span><span class="k">print</span><span class="p">(</span><span class="n">interp4</span><span class="p">)</span>
+<span class="go">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 precip</span>
+<span class="go">time       x         y                </span>
+<span class="go">2015-06-18 1515946.0 5249806.0    45.0</span>
+<span class="go">           1581327.0 5279063.0    12.0</span>
+<span class="go">           1437006.0 5066885.0    36.5</span>
+<span class="go">2015-06-19 1515946.0 5249806.0    55.5</span>
+<span class="go">           1581327.0 5279063.0    37.5</span>
+<span class="go">           1437006.0 5066885.0    17.0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="adjust-grid-from-points">
+<h2>Adjust grid from points<a class="headerlink" href="#adjust-grid-from-points" title="Permalink to this headline">¶</a></h2>
+<p>There is also a method to adjust a grid based on the point_data (bias correction). And a method to run tests on it's accuracy.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [47]: </span><span class="n">interp5</span> <span class="o">=</span> <span class="n">interpc</span><span class="o">.</span><span class="n">adjust_grid_from_points</span><span class="p">(</span><span class="n">grid_res</span><span class="p">,</span> <span class="n">to_crs</span><span class="p">)</span>
+<span class="go">Preparing input and output</span>
+<span class="go">Running interpolations...</span>
+<span class="go">Packaging up the output</span>
+<span class="go">Preparing input and output</span>
+<span class="go">Running interpolations...</span>
+<span class="go">Packaging up the output</span>
+<span class="go">Prepare input and output data</span>
+<span class="go">Run interpolations...</span>
+<span class="go">2015-06-18 00:00:00</span>
+<span class="go">2015-06-19 00:00:00</span>
+<span class="go">Packaging up the output</span>
+
+<span class="gp">In [48]: </span><span class="k">print</span><span class="p">(</span><span class="n">interp5</span><span class="p">)</span>
+<span class="go">                                                                                                                                                                                                                                                                              &lt;xarray.Dataset&gt;</span>
+<span class="go">Dimensions:  (time: 2, x: 35, y: 32)</span>
+<span class="go">Coordinates:</span>
+<span class="go">  * x        (x) float64 1.327e+06 1.337e+06 1.347e+06 ... 1.657e+06 1.667e+06</span>
+<span class="go">  * y        (y) float64 5.018e+06 5.028e+06 5.038e+06 ... 5.318e+06 5.328e+06</span>
+<span class="go">  * time     (time) datetime64[ns] 2015-06-18 2015-06-19</span>
+<span class="go">Data variables:</span>
+<span class="go">    precip   (time, x, y) float64 12.54 17.17 15.35 20.94 ... 8.392 11.26 7.764</span>
+
+<span class="gp">In [49]: </span><span class="n">interp6</span> <span class="o">=</span> <span class="n">interpc</span><span class="o">.</span><span class="n">validate_grid_from_points</span><span class="p">(</span><span class="mf">0.08</span><span class="p">,</span> <span class="n">grid_res</span><span class="p">,</span> <span class="n">to_crs</span><span class="p">)</span>
+<span class="go">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Preparing input and output</span>
+<span class="go">Running interpolations...</span>
+<span class="go">Packaging up the output</span>
+<span class="go">Preparing input and output</span>
+<span class="go">Running interpolations...</span>
+<span class="go">Packaging up the output</span>
+<span class="go">Prepare input and output data</span>
+<span class="go">Run interpolations...</span>
+<span class="go">2015-06-18 00:00:00</span>
+<span class="go">2015-06-19 00:00:00</span>
+<span class="go">Packaging up the output</span>
+<span class="go">2015-06-18 00:00:00</span>
+<span class="go">2015-06-19 00:00:00</span>
+<span class="go">Preparing input and output</span>
+<span class="go">Running interpolations...</span>
+<span class="go">Packaging up the output</span>
+
+<span class="gp">In [50]: </span><span class="k">print</span><span class="p">(</span><span class="n">interp6</span><span class="p">)</span>
+<span class="go">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           precip  point_precip  grid_precip</span>
+<span class="go">time       x         y                                           </span>
+<span class="go">2015-06-18 1422343.0 5065062.0     5.5         18.54        18.66</span>
+<span class="go">           1435543.0 5107472.0    15.0         21.00        21.17</span>
+<span class="go">           1444494.0 5034441.0    32.0           NaN        35.13</span>
+<span class="go">           1571497.0 5325514.0    59.5           NaN        29.17</span>
+<span class="go">           1571991.0 5192868.0    13.0         15.64        13.13</span>
+<span class="go">           1574399.0 5155098.0    18.0         10.05        10.07</span>
+<span class="go">2015-06-19 1422343.0 5065062.0    14.0         16.06        28.13</span>
+<span class="go">           1435543.0 5107472.0    26.5         22.03        66.17</span>
+<span class="go">           1444494.0 5034441.0     6.0           NaN         5.93</span>
+<span class="go">           1571497.0 5325514.0    42.0           NaN        42.40</span>
+<span class="go">           1571991.0 5192868.0     9.5         13.58        21.09</span>
+<span class="go">           1574399.0 5155098.0    10.0         14.35        25.98</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="package_references.html" class="btn btn-neutral float-right" title="Package References" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019 Mike Kittridge
+      <span class="lastupdated">
+        Last updated on Jul 15, 2019.
+      </span>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
