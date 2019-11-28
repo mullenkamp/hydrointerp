@@ -85,7 +85,7 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
         input_digits = 4
     else:
         input_digits = 0
-    if (to_crs == 4326) | ((from_crs == 4326) & (to_crs is None)):
+    if (to_crs == 4326) | ((from_crs == 4326) & (isinstance(to_crs, (str, int, dict)))):
         output_digits = 4
     else:
         output_digits = 0
@@ -117,7 +117,7 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
 
     xy_out = np.dstack(np.meshgrid(new_y, new_x)).reshape(-1, 2)
 
-    if isinstance(to_crs, (str, int)):
+    if isinstance(to_crs, (str, int, dict)):
         trans2 = Transformer.from_proj(to_crs1, from_crs1)
         xy_new_index = np.array(trans2.transform(*xy_out.T)).T
     else:
