@@ -262,6 +262,7 @@ class Interp(object):
         both1 = pd.merge(point_data, pts2.rename(columns={'precip': 'grid_precip'}), on=['x', 'y', 'time'])
 
         both1['ratio'] = both1['precip']/both1['grid_precip']
+        both1.loc[both1['ratio'].isnull(), 'ratio'] = 0
         self.ratio_precip = both1
 
         ## Create the bounding box for the new grid
@@ -275,6 +276,8 @@ class Interp(object):
 
         ## Points to grid
         ratio_grid = interp2d.points_to_grid(both1[['time', 'x', 'y', 'ratio']], 'time', 'x', 'y', 'ratio', grid_res, to_crs, None, (min_lon, max_lon, min_lat, max_lat), method, 'nearest')
+        val = ratio_grid.ratio.values
+        val[val == np.inf] = 0
 
         ## Add original grid by diff grid
         grid2 = xr.merge([grid1, ratio_grid], join='inner')

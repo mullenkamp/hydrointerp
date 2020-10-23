@@ -11,6 +11,8 @@ import xarray as xr
 from pyproj import Proj, transform
 from datetime import datetime
 from pdsql import mssql
+from hydrointerp import Interp
+from matplotlib import pyplot
 
 pd.options.display.max_columns = 10
 
@@ -35,7 +37,7 @@ nc1 = 'nasa_gpm_2017-07-20.nc'
 
 nc_dir = r'N:\nasa\precip\gpm_3IMERGHH'
 nc2 = 'gpm_3IMERGHH_v06_20150601-20150630.nc4'
-
+nc1 = r'N:\nasa\precip\gpm_3IMERGHH\gpm_3IMERGHH_v06_20150101-20150131.nc4'
 
 point_time_name = 'DateTime'
 point_x_name = 'NZTMX'
@@ -62,7 +64,7 @@ min_val=0
 ## Nasa data
 ds1 = xr.open_dataset(nc1)
 
-grid_data = ds1[[grid_data_name]].resample(time='D', closed='right', label='left').sum('time')
+grid_data = ds1[[grid_data_name]].resample(time='D', closed='right', label='left').sum('time') / 2
 
 ds1.close()
 del ds1
@@ -108,7 +110,7 @@ ds2 = ds1[[grid_data_name, 'precipitationQualityIndex']].sel(time=slice('2015-06
 ds1.close()
 del ds1
 
-da1 = ds2[grid_data_name].resample(time='D', closed='right', label='left').sum('time')
+da1 = ds2[grid_data_name].resample(time='D', closed='right', label='left').sum('time') / 2
 da2 = ds2['precipitationQualityIndex'].resample(time='D', closed='right', label='left').mean('time')
 
 ds2b = xr.merge([da1, da2])
@@ -167,7 +169,7 @@ ts_data.DateTime = pd.to_datetime(ts_data.DateTime)
 site_data = mssql.rd_sql(server, db, 'ExternalSite', ['ExtSiteID', 'NZTMX', 'NZTMY'], where_in={'ExtSiteID': summ2.ExtSiteID.tolist()}).round()
 
 point_data = pd.merge(ts_data, site_data, on='ExtSiteID').drop('ExtSiteID', axis=1)
-point_data.rename(columns={'Value': 'precip', 'DateTime': 'date'}, inplace=True)
+# point_data.rename(columns={'Value': 'precip', 'DateTime': 'date'}, inplace=True)
 
 point_data.to_csv(r'E:\ecan\git\hydrointerp\hydrointerp\datasets\ecan_data_2015-06-18.csv', index=False)
 
