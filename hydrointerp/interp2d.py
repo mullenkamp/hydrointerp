@@ -85,7 +85,7 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
         input_digits = 4
     else:
         input_digits = 0
-    if (to_crs == 4326) | ((from_crs == 4326) & (to_crs is None)):
+    if (to_crs == 4326) | ((from_crs == 4326) & (isinstance(to_crs, (str, int, dict)))):
         output_digits = 4
     else:
         output_digits = 0
@@ -96,7 +96,7 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
     input_coords, dxy, x_min, y_min = grid_xy_to_map_coords(xy_orig_pts, input_digits)
 
     ### convert to new projection and prepare X/Y data
-    if isinstance(from_crs, (str, int)) & isinstance(to_crs, (str, int)):
+    if isinstance(from_crs, (str, int, dict)) & isinstance(to_crs, (str, int, dict)):
         from_crs1 = Proj(CRS.from_user_input(from_crs))
         to_crs1 = Proj(CRS.from_user_input(to_crs))
         trans1 = Transformer.from_proj(from_crs1, to_crs1)
@@ -117,7 +117,7 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
 
     xy_out = np.dstack(np.meshgrid(new_y, new_x)).reshape(-1, 2)
 
-    if isinstance(to_crs, (str, int)):
+    if isinstance(to_crs, (str, int, dict)):
         trans2 = Transformer.from_proj(to_crs1, from_crs1)
         xy_new_index = np.array(trans2.transform(*xy_out.T)).T
     else:
@@ -298,7 +298,7 @@ def points_to_grid(df, time_name, x_name, y_name, data_name, grid_res, from_crs,
     ### Convert input data to crs of points shp and create input xy
     from_crs1 = Proj(CRS.from_user_input(from_crs))
     xy1 = np.array(list(zip(df2[y_name], df2[x_name]))).T
-    if isinstance(to_crs, (str, int)):
+    if isinstance(to_crs, (str, int, dict)):
         to_crs1 = Proj(CRS.from_user_input(to_crs))
         trans1 = Transformer.from_proj(from_crs1, to_crs1)
         xy1 = np.array(trans1.transform(*xy1))
