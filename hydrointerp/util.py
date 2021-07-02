@@ -54,15 +54,15 @@ def grid_xy_to_map_coords(xy, digits=2, dtype=int, copy=True):
         xy1 = (xy.T * 10**digits).copy()
     else:
        xy1 = (xy.T * 10**digits)
-    y_min, x_min = xy1.min(1)
+    x_min, y_min = xy1.min(1)
     dxy = int(np.median(np.diff(xy1[0])))
-    xy1[0] = ((xy1[0] - y_min)/dxy)
-    xy1[1] = ((xy1[1] - x_min)/dxy)
+    xy1[0] = ((xy1[0] - x_min)/dxy)
+    xy1[1] = ((xy1[1] - y_min)/dxy)
 
     if dtype == int:
         xy1 = np.rint(xy1).astype(int)
 
-    return (xy1, dxy/10**digits, x_min/10**digits, y_min/10**digits)
+    return xy1, dxy/10**digits, x_min/10**digits, y_min/10**digits
 
 
 def point_xy_to_map_coords(xy, dxy, x_min, y_min, dtype=int, copy=True):
@@ -91,8 +91,11 @@ def point_xy_to_map_coords(xy, dxy, x_min, y_min, dtype=int, copy=True):
         xy1 = xy.T.copy()
     else:
         xy1 = xy.T
-    xy1[0] = ((xy1[0] - y_min)/dxy)
-    xy1[1] = ((xy1[1] - x_min)/dxy)
+
+    x = ((xy1[0] - x_min)/dxy)
+    y = ((xy1[1] - y_min)/dxy)
+    xy1[0] = y
+    xy1[1] = x
 
     if dtype == int:
         xy1 = np.rint(xy1).astype(int)

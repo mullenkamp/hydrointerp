@@ -23,17 +23,20 @@ from hydrointerp.util import grid_xy_to_map_coords, point_xy_to_map_coords
 def _process_grid_input(input_data, time_name, x_name, y_name, data_name, zero_pad=True):
     if isinstance(input_data, pd.DataFrame):
         grouped = input_data.set_index([time_name, y_name, x_name])[data_name].sort_index()
+        # grouped = input_data.set_index([time_name, x_name, y_name])[data_name].sort_index()
         input_data = grouped.to_xarray().to_dataset()
     if isinstance(input_data, xr.Dataset):
         da1 = input_data[data_name]
         da2 = da1.transpose(time_name, y_name, x_name).sortby([time_name, y_name, x_name])
+        # da2 = da1.transpose(time_name, x_name, y_name).sortby([time_name, x_name, y_name])
         arr1 = da2.values
         if zero_pad:
             np.nan_to_num(arr1, False)
         x = da1[x_name].values
         y = da1[y_name].values
         time1 = da1[time_name].values
-        xy_orig_pts = np.dstack(np.meshgrid(y, x)).reshape(-1, 2)
+        # xy_orig_pts = np.dstack(np.meshgrid(y, x)).reshape(-1, 2)
+        xy_orig_pts = np.dstack(np.meshgrid(x, y)).reshape(-1, 2)
 
     return arr1, xy_orig_pts, time1
 
@@ -99,12 +102,15 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
     if isinstance(from_crs, (str, int, dict)) & isinstance(to_crs, (str, int, dict)):
         from_crs1 = Proj(CRS.from_user_input(from_crs))
         to_crs1 = Proj(CRS.from_user_input(to_crs))
-        trans1 = Transformer.from_proj(from_crs1, to_crs1)
+        trans1 = Transformer.from_proj(from_crs1, to_crs1, always_xy=True)
         xy_new = np.array(trans1.transform(*xy_orig_pts.T)).round(output_digits)
-        out_y_min, out_x_min = xy_new.min(1)
-        out_y_max, out_x_max = xy_new.max(1)
+        # out_y_min, out_x_min = xy_new.min(1)
+        # out_y_max, out_x_max = xy_new.max(1)
+        out_x_min, out_y_min = xy_new.min(1)
+        out_x_max, out_y_max = xy_new.max(1)
     else:
         out_y_max, out_x_max = xy_orig_pts.max(0)
+        out_x_max, out_y_max = xy_orig_pts.max(0)
         out_x_min = x_min
         out_y_min = y_min
 
@@ -115,10 +121,11 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
     new_x = np.arange(out_x_min, out_x_max, grid_res)
     new_y = np.arange(out_y_min, out_y_max, grid_res)
 
-    xy_out = np.dstack(np.meshgrid(new_y, new_x)).reshape(-1, 2)
+    # xy_out = np.dstack(np.meshgrid(new_y, new_x)).reshape(-1, 2)
+    xy_out = np.dstack(np.meshgrid(new_x, new_y)).reshape(-1, 2)
 
     if isinstance(to_crs, (str, int, dict)):
-        trans2 = Transformer.from_proj(to_crs1, from_crs1)
+        trans2 = Transformer.from_proj(to_crs1, from_crs1, always_xy=True)
         xy_new_index = np.array(trans2.transform(*xy_out.T)).T
     else:
         xy_new_index = xy_out
@@ -143,12 +150,12 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
 
     ### Reshape and package data
     print('Packaging up the output')
-    arr2 = arr2.reshape((len(time1), len(new_x), len(new_y))).round(digits)
+    arr2 = arr2.reshape((len(time1), len(new_y), len(new_x))).round(digits)
 
     if isinstance(min_val, (int, float)):
         arr2[arr2 < min_val] = min_val
 
-    new_ds = xr.DataArray(arr2, coords=[time1, new_x, new_y], dims=['time', 'x', 'y'], name=data_name).to_dataset()
+    new_ds = xr.DataArray(arr2, coords=[time1, new_y, new_x], dims=['time', 'y', 'x'], name=data_name).to_dataset()
 
     return new_ds
 
@@ -302,15 +309,15 @@ def points_to_grid(df, time_name, x_name, y_name, data_name, grid_res, from_crs,
         to_crs1 = Proj(CRS.from_user_input(to_crs))
         trans1 = Transformer.from_proj(from_crs1, to_crs1)
         xy1 = np.array(trans1.transform(*xy1))
-        df2[x_name] = xy1[1]
-        df2[y_name] = xy1[0]
+        df2[x_name] = xy1[0]
+        df2[y_name] = xy1[1]
 
     ### Prepare output data
     if isinstance(bbox, tuple):
         out_x_min, out_x_max, out_y_min, out_y_max = bbox
     else:
-        out_y_min, out_x_min = xy1.min(1).round(output_digits)
-        out_y_max, out_x_max = xy1.max(1).round(output_digits)
+        out_x_min, out_y_min = xy1.min(1).round(output_digits)
+        out_x_max, out_y_max = xy1.max(1).round(output_digits)
 
     new_x = np.arange(out_x_min, out_x_max, grid_res)
     new_y = np.arange(out_y_min, out_y_max, grid_res)
@@ -413,11 +420,11 @@ def points_to_points(df, time_name, x_name, y_name, data_name, point_data, from_
     xy1 = df2[[y_name, x_name]].values
     trans2 = Transformer.from_proj(from_crs1, to_crs1)
     xy_new1 = np.array(trans2.transform(*xy1.T))
-    df2[x_name] = xy_new1[1]
-    df2[y_name] = xy_new1[0]
+    df2[x_name] = xy_new1[0]
+    df2[y_name] = xy_new1[1]
 
     ### Run interpolations
-    points1 = np.array((points[1], points[0])).T
+    points1 = np.array((points[0], points[1])).T
     new_lst = []
     for name, group in df2.groupby(time_name):
         print(name)
