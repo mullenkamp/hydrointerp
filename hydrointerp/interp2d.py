@@ -109,7 +109,7 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
         out_x_min, out_y_min = xy_new.min(1)
         out_x_max, out_y_max = xy_new.max(1)
     else:
-        out_y_max, out_x_max = xy_orig_pts.max(0)
+        out_x_max, out_y_max = xy_orig_pts.max(0)
         out_x_max, out_y_max = xy_orig_pts.max(0)
         out_x_min = x_min
         out_y_min = y_min
@@ -204,12 +204,12 @@ def grid_to_points(grid, time_name, x_name, y_name, data_name, point_data, from_
         if _fiona:
             with fiona.open(point_data) as f1:
                 point_crs = Proj(f1.crs)
-                points = np.array([tuple(reversed(p['geometry']['coordinates'])) for p in f1 if p['geometry']['type'] == 'Point'])
+                points = np.array([tuple(p['geometry']['coordinates']) for p in f1 if p['geometry']['type'] == 'Point'])
         else:
             raise ImportError('Please install fiona for importing GIS files')
     elif isinstance(point_data, pd.DataFrame):
         point_crs = CRS.from_user_input(to_crs)
-        points = point_data[['y', 'x']].values
+        points = point_data[['x', 'y']].values
     else:
         raise ValueError('point_path must be a str path to a geometry file (e.g. shapefile) or a DataFrame with the same x_name and y_name columns')
 
@@ -304,7 +304,7 @@ def points_to_grid(df, time_name, x_name, y_name, data_name, grid_res, from_crs,
 
     ### Convert input data to crs of points shp and create input xy
     from_crs1 = Proj(CRS.from_user_input(from_crs))
-    xy1 = np.array(list(zip(df2[y_name], df2[x_name]))).T
+    xy1 = np.array(list(zip(df2[x_name], df2[y_name]))).T
     if isinstance(to_crs, (str, int, dict)):
         to_crs1 = Proj(CRS.from_user_input(to_crs))
         trans1 = Transformer.from_proj(from_crs1, to_crs1)
@@ -401,7 +401,7 @@ def points_to_points(df, time_name, x_name, y_name, data_name, point_data, from_
             raise ImportError('Please install fiona for importing GIS files')
     elif isinstance(point_data, pd.DataFrame):
         point_crs = Proj(CRS.from_user_input(to_crs))
-        points = point_data[['y', 'x']].values
+        points = point_data[['x', 'y']].values
     else:
         raise ValueError('point_path must be a str path to a geometry file (e.g. shapefile) or a DataFrame with the same x_name and y_name columns')
 
