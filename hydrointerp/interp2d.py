@@ -245,9 +245,9 @@ def grid_to_points(grid, time_name, x_name, y_name, data_name, point_data, from_
     arr3 = arr2.flatten().round(digits)
 
     time_ar = np.repeat(time1, len(points))
-    y_ar = np.tile(points.T[0], len(time1))
-    x_ar = np.tile(points.T[1], len(time1))
-    new_df = pd.DataFrame({'time': time_ar, 'x': x_ar, 'y': y_ar, data_name: arr3}).set_index(['time', 'x', 'y'])
+    y_ar = np.tile(points.T[1], len(time1))
+    x_ar = np.tile(points.T[0], len(time1))
+    new_df = pd.DataFrame({'time': time_ar, 'y': y_ar, 'x': x_ar, data_name: arr3}).set_index(['time', 'y', 'x'])
 
     return new_df
 
@@ -417,18 +417,18 @@ def points_to_points(df, time_name, x_name, y_name, data_name, point_data, from_
     else:
         to_crs1 = point_crs
     from_crs1 = Proj(CRS.from_user_input(from_crs))
-    xy1 = df2[[y_name, x_name]].values
+    xy1 = df2[[x_name, y_name]].values
     trans2 = Transformer.from_proj(from_crs1, to_crs1)
     xy_new1 = np.array(trans2.transform(*xy1.T))
     df2[x_name] = xy_new1[0]
     df2[y_name] = xy_new1[1]
 
     ### Run interpolations
-    points1 = np.array((points[0], points[1])).T
+    points1 = np.array((points[1], points[0])).T
     new_lst = []
     for name, group in df2.groupby(time_name):
         print(name)
-        xy = group[[x_name, y_name]].values
+        xy = group[[y_name, x_name]].values
         new_z = griddata(xy, group[data_name].values, points1, method=method, fill_value=np.nan).round(digits)
         if isinstance(min_val, (int, float)):
             new_z[new_z < min_val] = min_val
@@ -436,9 +436,9 @@ def points_to_points(df, time_name, x_name, y_name, data_name, point_data, from_
 
     ### Create new df
     time_ar = np.repeat(time1, len(points1))
-    x_ar = np.tile(points1.T[0], len(time1))
     y_ar = np.tile(points1.T[1], len(time1))
-    new_df = pd.DataFrame({'time': time_ar, 'x': x_ar, 'y': y_ar, data_name: new_lst}).set_index(['time', 'x', 'y'])
+    x_ar = np.tile(points1.T[0], len(time1))
+    new_df = pd.DataFrame({'time': time_ar, 'y': y_ar, 'x': x_ar, data_name: new_lst}).set_index(['time', 'y', 'x'])
 
     ### Export results
     return new_df
