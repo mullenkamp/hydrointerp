@@ -83,7 +83,7 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
     -------
     xarray Dataset
     """
-    print('Preparing input and output')
+    # print('Preparing input and output')
     if from_crs == 4326:
         input_digits = 4
     else:
@@ -135,7 +135,7 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
     ### Run interpolation (need to add mutliprossessing)
     arr2 = np.zeros((len(time1), output_coords.shape[1]), arr1.dtype)
 
-    print('Running interpolations...')
+    # print('Running interpolations...')
     ## An example for using RectBivariateSpline as the equivalent to map_coordinates output (about half as fast):
 #    arr2a = arr2.copy()
 #
@@ -149,7 +149,7 @@ def grid_to_grid(grid, time_name, x_name, y_name, data_name, grid_res, from_crs,
          map_coordinates(arr1[d], output_coords, arr2[d], order=order, mode=extrapolation, cval=fill_val, prefilter=True)
 
     ### Reshape and package data
-    print('Packaging up the output')
+    # print('Packaging up the output')
     arr2 = arr2.reshape((len(time1), len(new_y), len(new_x))).round(digits)
 
     if isinstance(min_val, (int, float)):
@@ -193,7 +193,7 @@ def grid_to_points(grid, time_name, x_name, y_name, data_name, point_data, from_
     -------
     DataFrame
     """
-    print('Preparing input and output')
+    # print('Preparing input and output')
     if from_crs == 4326:
         input_digits = 4
     else:
@@ -231,7 +231,7 @@ def grid_to_points(grid, time_name, x_name, y_name, data_name, point_data, from_
     points_coords = point_xy_to_map_coords(points_from_crs, dxy, x_min, y_min, float)
 
     ### Run interpolations
-    print('Running interpolations...')
+    # print('Running interpolations...')
     arr2 = np.zeros((len(time1), points_coords.shape[1]), arr1.dtype)
 
     for d in np.arange(len(arr1)):
@@ -241,7 +241,7 @@ def grid_to_points(grid, time_name, x_name, y_name, data_name, point_data, from_
         arr2[arr2 < min_val] = min_val
 
     ### Reshape and package data
-    print('Packaging up the output')
+    # print('Packaging up the output')
     arr3 = arr2.flatten().round(digits)
 
     time_ar = np.repeat(time1, len(points))
@@ -291,7 +291,7 @@ def points_to_grid(df, time_name, x_name, y_name, data_name, grid_res, from_crs,
     -------
     xarray Dataset
     """
-    print('Prepare input and output data')
+    # print('Prepare input and output data')
     if (to_crs == 4326) | ((from_crs == 4326) & (to_crs is None)):
         output_digits = 4
     else:
@@ -325,13 +325,13 @@ def points_to_grid(df, time_name, x_name, y_name, data_name, grid_res, from_crs,
     xy_out = np.dstack(np.meshgrid(new_x, new_y)).reshape(-1, 2)
 
     ### Run interpolations
-    print('Run interpolations...')
+    # print('Run interpolations...')
     arr2 = np.zeros((len(time1), xy_out.shape[0]), df2[data_name].dtype)
     index1 = {time1[i]: i for i in np.arange(len(time1))}
 
 #    start1 = time()
     for name, group in df2.groupby(time_name):
-        print(name)
+        # print(name)
         i = index1[name]
         xy = group[[x_name, y_name]].values
         arr2[i] = griddata(xy, group[data_name].values, xy_out, method=method, fill_value=fill_val).round(digits)
@@ -345,7 +345,7 @@ def points_to_grid(df, time_name, x_name, y_name, data_name, grid_res, from_crs,
 #    setb = end1 - start1
 
     ### Reshape and package data
-    print('Packaging up the output')
+    # print('Packaging up the output')
     arr2 = arr2.reshape((len(time1), len(new_y), len(new_x))).round(digits)
 
     if isinstance(min_val, (int, float)):
@@ -427,7 +427,7 @@ def points_to_points(df, time_name, x_name, y_name, data_name, point_data, from_
     points1 = np.array((points[1], points[0])).T
     new_lst = []
     for name, group in df2.groupby(time_name):
-        print(name)
+        # print(name)
         xy = group[[y_name, x_name]].values
         new_z = griddata(xy, group[data_name].values, points1, method=method, fill_value=np.nan).round(digits)
         if isinstance(min_val, (int, float)):
